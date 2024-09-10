@@ -8885,7 +8885,7 @@ declare namespace Office {
             Removed = "removed"
         }
         /**
-         * Specifies an attachment's type.
+         * Specifies the attachment's type.
          *
          * @remarks
          *
@@ -10494,8 +10494,7 @@ declare namespace Office {
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
-         *        `isInline`: If true, indicates that the attachment will be shown inline in the message body,
-         *                    and should not be displayed in the attachment list.
+         *        `isInline`: If true, indicates that the attachment will be shown inline as an image in the message body and won't be displayed in the attachment list.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter
          *                             of type `Office.AsyncResult`.
          *                 On success, the attachment identifier will be provided in the `asyncResult.value` property.
@@ -10573,8 +10572,7 @@ declare namespace Office {
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
-         *        `isInline`: If true, indicates that the attachment will be shown inline in the message body
-         *                    and should not be displayed in the attachment list.
+         *        `isInline`: If true, indicates that the attachment will be shown inline as an image in the message body and won't be displayed in the attachment list.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter
          *                             of type `Office.AsyncResult`.
          *                  On success, the attachment identifier will be provided in the `asyncResult.value` property.
@@ -12547,7 +12545,7 @@ declare namespace Office {
     /**
      * Represents an attachment on an item. Compose mode only.
      *
-     * An array of `AttachmentDetailsCompose` objects is returned as the attachments property of an appointment or message item.
+     * An array of `AttachmentDetailsCompose` objects is returned by the `getAttachmentsAsync` method.
      *
      * @remarks
      * [Api set: Mailbox 1.8]
@@ -12558,7 +12556,7 @@ declare namespace Office {
      */
     interface AttachmentDetailsCompose {
         /**
-         * Gets a value that indicates the type of an attachment.
+         * Gets a value that indicates the attachment's type.
          */
         attachmentType: MailboxEnums.AttachmentType | string;
         /**
@@ -12566,7 +12564,7 @@ declare namespace Office {
          */
         id: string;
         /**
-         * Gets a value that indicates whether the attachment should be displayed in the body of the item.
+         * Gets a value that indicates whether the attachment appears as an image in the body of the item instead of in the attachment list.
          */
         isInline: boolean;
         /**
@@ -12588,7 +12586,7 @@ declare namespace Office {
     /**
      * Represents an attachment on an item from the server. Read mode only.
      *
-     * An array of `AttachmentDetails` objects is returned as the attachments property of an appointment or message item.
+     * An array of `AttachmentDetails` objects is returned as the `attachments` property of an appointment or message item.
      *
      * @remarks
      * [Api set: Mailbox 1.1]
@@ -12599,7 +12597,7 @@ declare namespace Office {
      */
     interface AttachmentDetails {
         /**
-         * Gets a value that indicates the type of an attachment.
+         * Gets a value that indicates the attachment's type.
          */
         attachmentType: MailboxEnums.AttachmentType | string;
         /**
@@ -12618,7 +12616,7 @@ declare namespace Office {
          */
         id: string;
         /**
-         * Gets a value that indicates whether the attachment should be displayed in the body of the item.
+         * Gets a value that indicates whether the attachment appears as an image in the body of the item instead of in the attachment list.
          */
         isInline: boolean;
         /**
@@ -12634,7 +12632,7 @@ declare namespace Office {
         size: number;
     }
     /**
-     * Provides information about an attachment on a mail item that raised the
+     * Provides information about the attachment on a mail item that raised the
      * `Office.EventType.AttachmentsChanged` event.
      *
      * @remarks
@@ -15505,18 +15503,18 @@ declare namespace Office {
          *
          *        `attachments`: An array of JSON objects that are either file or item attachments.
          *
-         *        `attachments.type`: Indicates the type of attachment. Must be file for a file attachment or item for an item attachment.
+         *        `attachments.type`: Indicates the type of attachment. Must be `file` for a file attachment or `item` for an item attachment.
          *
          *        `attachments.name`: A string that contains the name of the attachment, up to 255 characters in length.
          *
-         *        `attachments.url`: Only used if type is set to file. The URI of the location for the file. **Important**: This link must be
+         *        `attachments.url`: Only used if the attachment type is set to `file`. The URI of the location for the file. **Important**: This link must be
          *        publicly accessible, without need for authentication by Exchange Online servers. However, with on-premises Exchange, the link can
          *        be accessible on a private network as long as it doesn't need further authentication.
          *
-         *        `attachments.isInline`: Only used if type is set to file. If true, indicates that the attachment will be shown inline in the
-         *        message body, and should not be displayed in the attachment list.
+         *        `attachments.isInline`: Only used if the attachment type is set to `file`. If true, indicates that the attachment will be shown inline as an image
+         *        in the message body and won't be displayed in the attachment list.
          *
-         *        `attachments.itemId`: Only used if type is set to item. The EWS item ID of the existing e-mail you want to attach to the new message.
+         *        `attachments.itemId`: Only used if the attachment type is set to `item`. The EWS item ID of the existing e-mail you want to attach to the new message.
          *        This is a string up to 100 characters.
          */
         displayNewMessageForm(parameters: any): void;
@@ -15552,18 +15550,18 @@ declare namespace Office {
          *
          *        `attachments`: An array of JSON objects that are either file or item attachments.
          *
-         *        `attachments.type`: Indicates the type of attachment. Must be file for a file attachment or item for an item attachment.
+         *        `attachments.type`: Indicates the type of attachment. Must be `file` for a file attachment or `item` for an item attachment.
          *
          *        `attachments.name`: A string that contains the name of the attachment, up to 255 characters in length.
          *
-         *        `attachments.url`: Only used if type is set to file. The URI of the location for the file. **Important**: This link must be
+         *        `attachments.url`: Only used if the attachment type is set to `file`. The URI of the location for the file. **Important**: This link must be
          *        publicly accessible, without need for authentication by Exchange Online servers. However, with on-premises Exchange, the link can
          *        be accessible on a private network as long as it doesn't need further authentication.
          *
-         *        `attachments.isInline`: Only used if type is set to file. If true, indicates that the attachment will be shown inline in the
-         *        message body, and should not be displayed in the attachment list.
+         *        `attachments.isInline`: Only used if the attachment type is set to `file`. If true, indicates that the attachment will be shown inline as an image
+         *        in the message body and won't be displayed in the attachment list.
          *
-         *        `attachments.itemId`: Only used if type is set to item. The EWS item ID of the existing e-mail you want to attach to the new message.
+         *        `attachments.itemId`: Only used if the attachment type is set to `item`. The EWS item ID of the existing e-mail you want to attach to the new message.
          *        This is a string up to 100 characters.
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
@@ -15603,18 +15601,18 @@ declare namespace Office {
          *
          *        `attachments`: An array of JSON objects that are either file or item attachments.
          *
-         *        `attachments.type`: Indicates the type of attachment. Must be file for a file attachment or item for an item attachment.
+         *        `attachments.type`: Indicates the type of attachment. Must be `file` for a file attachment or `item` for an item attachment.
          *
          *        `attachments.name`: A string that contains the name of the attachment, up to 255 characters in length.
          *
-         *        `attachments.url`: Only used if type is set to file. The URI of the location for the file. **Important**: This link must be
+         *        `attachments.url`: Only used if the attachment type is set to `file`. The URI of the location for the file. **Important**: This link must be
          *        publicly accessible, without need for authentication by Exchange Online servers. However, with on-premises Exchange, the link can
          *        be accessible on a private network as long as it doesn't need further authentication.
          *
-         *        `attachments.isInline`: Only used if type is set to file. If true, indicates that the attachment will be shown inline in the
-         *        message body, and should not be displayed in the attachment list.
+         *        `attachments.isInline`: Only used if the attachment type is set to `file`. If true, indicates that the attachment will be shown inline as an image
+         *        in the message body and won't be displayed in the attachment list.
          *
-         *        `attachments.itemId`: Only used if type is set to item. The EWS item ID of the existing e-mail you want to attach to the new message.
+         *        `attachments.itemId`: Only used if the attachment type is set to `item`. The EWS item ID of the existing e-mail you want to attach to the new message.
          *        This is a string up to 100 characters.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter,
          *                `asyncResult`, which is an `Office.AsyncResult` object.
@@ -16503,8 +16501,7 @@ declare namespace Office {
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
-         *        `isInline`: If true, indicates that the attachment will be shown inline in the message body, and should not be displayed in the
-         *        attachment list.
+         *        `isInline`: If true, indicates that the attachment will be shown inline as an image in the message body and won't be displayed in the attachment list.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter of
          *                 type `Office.AsyncResult`. On success, the attachment identifier will be provided in the `asyncResult.value` property.
          *                 If uploading the attachment fails, the `asyncResult` object will contain an `Error` object that provides a description of
@@ -16585,7 +16582,7 @@ declare namespace Office {
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
-         *        `isInline`: If true, indicates that the attachment will be shown inline in the message body and should not be displayed in the attachment list.
+         *        `isInline`: If true, indicates that the attachment will be shown inline as an image in the message body and won't be displayed in the attachment list.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter of
          *                             type Office.AsyncResult. On success, the attachment identifier will be provided in the `asyncResult.value` property.
          *                  If uploading the attachment fails, the `asyncResult` object will contain an `Error` object that provides a description of the error.
