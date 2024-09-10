@@ -1,4 +1,4 @@
-// For Library Version: 1.127.0
+// For Library Version: 1.128.0
 
 declare module "sap/f/library" {
   export interface IShellBar {
@@ -41727,14 +41727,8 @@ declare module "sap/m/Input" {
    * 	 -  If a `selectedKey` is bound and the user types before the data is loaded, the user's input will
    *     be overwritten by the binding update.
    */
-  export default class Input
-    extends InputBase
-    implements
-      IAccessKeySupport,
-      /* was: sap.m.IToolbarInteractiveControl */ Object
-  {
+  export default class Input extends InputBase implements IAccessKeySupport {
     __implements__sap_ui_core_IAccessKeySupport: boolean;
-    __implements__sap_m_IToolbarInteractiveControl: boolean;
     /**
      * Constructor for a new `Input`.
      *
@@ -44163,10 +44157,14 @@ declare module "sap/m/InputBase" {
    */
   export default class InputBase
     extends Control
-    implements IFormContent, ISemanticFormContent
+    implements
+      IFormContent,
+      ISemanticFormContent,
+      /* was: sap.m.IToolbarInteractiveControl */ Object
   {
     __implements__sap_ui_core_IFormContent: boolean;
     __implements__sap_ui_core_ISemanticFormContent: boolean;
+    __implements__sap_m_IToolbarInteractiveControl: boolean;
     /**
      * Constructor for a new `sap.m.InputBase`.
      *
@@ -47817,6 +47815,21 @@ declare module "sap/m/Link" {
      */
     getEnabled(): boolean;
     /**
+     * Gets current value of property {@link #getEndIcon endIcon}.
+     *
+     * Defines the icon to be displayed as graphical element in the end of the `Link`. It can be an icon from
+     * the icon font. **Note:** Usage of icon-only link is not supported, the link must always have a text.
+     * **Note:** We recommend using аn icon in the beginning or the end only, and always with text. **Note:**
+     * Using an image instead of icon is not supported.
+     *
+     * Default value is `empty string`.
+     *
+     * @since 1.128.0
+     *
+     * @returns Value of property `endIcon`
+     */
+    getEndIcon(): URI;
+    /**
      * Gets current value of property {@link #getHref href}.
      *
      * Defines the link target URI. Supports standard hyperlink behavior. **Note:** Don't set `href` property
@@ -47827,6 +47840,21 @@ declare module "sap/m/Link" {
      * @returns Value of property `href`
      */
     getHref(): URI;
+    /**
+     * Gets current value of property {@link #getIcon icon}.
+     *
+     * Defines the icon to be displayed as graphical element in the beginning of the `Link`. It can be an icon
+     * from the icon font. **Note:** Usage of icon-only link is not supported, the link must always have a text.
+     * **Note:** We recommend using аn icon in the beginning or the end only, and always with text. **Note:**
+     * Using an image instead of icon is not supported.
+     *
+     * Default value is `empty string`.
+     *
+     * @since 1.128.0
+     *
+     * @returns Value of property `icon`
+     */
+    getIcon(): URI;
     /**
      * Gets current value of property {@link #getRel rel}.
      *
@@ -48087,6 +48115,28 @@ declare module "sap/m/Link" {
       bEnabled?: boolean
     ): this;
     /**
+     * Sets a new value for property {@link #getEndIcon endIcon}.
+     *
+     * Defines the icon to be displayed as graphical element in the end of the `Link`. It can be an icon from
+     * the icon font. **Note:** Usage of icon-only link is not supported, the link must always have a text.
+     * **Note:** We recommend using аn icon in the beginning or the end only, and always with text. **Note:**
+     * Using an image instead of icon is not supported.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `empty string`.
+     *
+     * @since 1.128.0
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setEndIcon(
+      /**
+       * New value for property `endIcon`
+       */
+      sEndIcon?: URI
+    ): this;
+    /**
      * Sets a new value for property {@link #getHref href}.
      *
      * Defines the link target URI. Supports standard hyperlink behavior. **Note:** Don't set `href` property
@@ -48103,6 +48153,28 @@ declare module "sap/m/Link" {
        * New value for property `href`
        */
       sHref?: URI
+    ): this;
+    /**
+     * Sets a new value for property {@link #getIcon icon}.
+     *
+     * Defines the icon to be displayed as graphical element in the beginning of the `Link`. It can be an icon
+     * from the icon font. **Note:** Usage of icon-only link is not supported, the link must always have a text.
+     * **Note:** We recommend using аn icon in the beginning or the end only, and always with text. **Note:**
+     * Using an image instead of icon is not supported.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `empty string`.
+     *
+     * @since 1.128.0
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setIcon(
+      /**
+       * New value for property `icon`
+       */
+      sIcon?: URI
     ): this;
     /**
      * Sets a new value for property {@link #getRel rel}.
@@ -48290,6 +48362,26 @@ declare module "sap/m/Link" {
      * Defines the displayed link text.
      */
     text?: string | PropertyBindingInfo;
+
+    /**
+     * Defines the icon to be displayed as graphical element in the beginning of the `Link`. It can be an icon
+     * from the icon font. **Note:** Usage of icon-only link is not supported, the link must always have a text.
+     * **Note:** We recommend using аn icon in the beginning or the end only, and always with text. **Note:**
+     * Using an image instead of icon is not supported.
+     *
+     * @since 1.128.0
+     */
+    icon?: URI | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Defines the icon to be displayed as graphical element in the end of the `Link`. It can be an icon from
+     * the icon font. **Note:** Usage of icon-only link is not supported, the link must always have a text.
+     * **Note:** We recommend using аn icon in the beginning or the end only, and always with text. **Note:**
+     * Using an image instead of icon is not supported.
+     *
+     * @since 1.128.0
+     */
+    endIcon?: URI | PropertyBindingInfo | `{${string}}`;
 
     /**
      * Determines whether the link can be triggered by the user.
@@ -50298,7 +50390,8 @@ declare module "sap/m/ListBase" {
      * corresponding binding context when the OData V4 model is used. Therefore, all binding-relevant limitations
      * apply in this context as well. For more details, see the {@link sap.ui.model.odata.v4.Context#setSelected setSelected},
      * the {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}, and the {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo requestValueListInfo }
-     * API documentation. Do not enable this feature when `$$SharedRequests` is active.
+     * API documentation. Do not enable this feature when `$$SharedRequests` or `$$clearSelectionOnFilter` is
+     * active.
      *
      * Default value is `true`.
      *
@@ -50973,7 +51066,8 @@ declare module "sap/m/ListBase" {
      * corresponding binding context when the OData V4 model is used. Therefore, all binding-relevant limitations
      * apply in this context as well. For more details, see the {@link sap.ui.model.odata.v4.Context#setSelected setSelected},
      * the {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}, and the {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo requestValueListInfo }
-     * API documentation. Do not enable this feature when `$$SharedRequests` is active.
+     * API documentation. Do not enable this feature when `$$SharedRequests` or `$$clearSelectionOnFilter` is
+     * active.
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
@@ -51348,7 +51442,8 @@ declare module "sap/m/ListBase" {
      * corresponding binding context when the OData V4 model is used. Therefore, all binding-relevant limitations
      * apply in this context as well. For more details, see the {@link sap.ui.model.odata.v4.Context#setSelected setSelected},
      * the {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}, and the {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo requestValueListInfo }
-     * API documentation. Do not enable this feature when `$$SharedRequests` is active.
+     * API documentation. Do not enable this feature when `$$SharedRequests` or `$$clearSelectionOnFilter` is
+     * active.
      *
      * @since 1.16.6
      */
@@ -89267,6 +89362,8 @@ declare module "sap/m/PlanningCalendarRow" {
 
   import Control from "sap/ui/core/Control";
 
+  import NonWorkingPeriod from "sap/ui/unified/NonWorkingPeriod";
+
   import DateTypeRange from "sap/ui/unified/DateTypeRange";
 
   import { URI } from "sap/ui/core/library";
@@ -89388,6 +89485,19 @@ declare module "sap/m/PlanningCalendarRow" {
        * The intervalHeader to add; if empty, nothing is inserted
        */
       oIntervalHeader: CalendarAppointment
+    ): this;
+    /**
+     * Adds some nonWorkingPeriod to the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    addNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod to add; if empty, nothing is inserted
+       */
+      oNonWorkingPeriod: NonWorkingPeriod
     ): this;
     /**
      * Adds some specialDate to the aggregation {@link #getSpecialDates specialDates}.
@@ -89643,6 +89753,14 @@ declare module "sap/m/PlanningCalendarRow" {
      */
     destroyIntervalHeaders(): this;
     /**
+     * Destroys all the nonWorkingPeriods in the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    destroyNonWorkingPeriods(): this;
+    /**
      * Destroys all the specialDates in the aggregation {@link #getSpecialDates specialDates}.
      *
      * @since 1.56
@@ -89830,13 +89948,13 @@ declare module "sap/m/PlanningCalendarRow" {
      * Specifics based on the intervals (hours, days or months) displayed in the `PlanningCalendar` views:
      *
      * Hours:
-     *  For views where the displayed intervals are hours, the placeholder snaps on every interval of 30 minutes.
+     *  For views where the displayed intervals are hours, the placeholder snaps on every interval of 15 minutes.
      * After the appointment is dropped, the {@link #event:appointmentDrop appointmentDrop} event is fired,
      * containing the new start and end UI5Date or JavaScript Date objects.
      *  For example, an appointment with start date "Nov 13 2017 12:17:00" and end date "Nov 13 2017 12:45:30"
      * lasts for 27 minutes and 30 seconds. After dragging and dropping to a new time, the possible new start
-     * date has time that is either "hh:00:00" or "hh:30:00" because of the placeholder that can snap on every
-     * 30 minutes. The new end date is calculated to be 27 minutes and 30 seconds later and would be either
+     * date has time that is either "hh:00:00" or "hh:15:00" because of the placeholder that can snap on every
+     * 15 minutes. The new end date is calculated to be 27 minutes and 30 seconds later and would be either
      * "hh:27:30" or "hh:57:30".
      *
      * Days:
@@ -89899,7 +90017,7 @@ declare module "sap/m/PlanningCalendarRow" {
      * Specifics based on the intervals (hours, days or months) displayed in the `PlanningCalendar` views:
      *
      * Hours: For views where the displayed intervals are hours, the appointment snaps on every interval of
-     * 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event
+     * 15 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event
      * is fired, containing the new start and end UI5Date or JavaScript Date objects.
      *
      * Days: For views where intervals are days, the appointment snaps to the end of the day. After the resize
@@ -90006,6 +90124,14 @@ declare module "sap/m/PlanningCalendarRow" {
      */
     getNonWorkingHours(): int[];
     /**
+     * Gets content of aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * Sets the provided period to be displayed as a non-working.
+     *
+     * @since 1.128
+     */
+    getNonWorkingPeriods(): NonWorkingPeriod[];
+    /**
      * Gets current value of property {@link #getRowHeaderDescription rowHeaderDescription}.
      *
      * Defines the text that will be announced by the screen reader when a user navigates to the row header.
@@ -90101,6 +90227,20 @@ declare module "sap/m/PlanningCalendarRow" {
       oIntervalHeader: CalendarAppointment
     ): int;
     /**
+     * Checks for the provided `sap.ui.unified.NonWorkingPeriod` in the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     * and returns its index if found or -1 otherwise.
+     *
+     * @since 1.128
+     *
+     * @returns The index of the provided control in the aggregation if found, or -1 otherwise
+     */
+    indexOfNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod whose index is looked for
+       */
+      oNonWorkingPeriod: NonWorkingPeriod
+    ): int;
+    /**
      * Checks for the provided `sap.ui.unified.DateTypeRange` in the aggregation {@link #getSpecialDates specialDates}.
      * and returns its index if found or -1 otherwise.
      *
@@ -90170,6 +90310,25 @@ declare module "sap/m/PlanningCalendarRow" {
       iIndex: int
     ): this;
     /**
+     * Inserts a nonWorkingPeriod into the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    insertNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod to insert; if empty, nothing is inserted
+       */
+      oNonWorkingPeriod: NonWorkingPeriod,
+      /**
+       * The `0`-based index the nonWorkingPeriod should be inserted at; for a negative value of `iIndex`, the
+       * nonWorkingPeriod is inserted at position 0; for a value greater than the current size of the aggregation,
+       * the nonWorkingPeriod is inserted at the last position
+       */
+      iIndex: int
+    ): this;
+    /**
      * Inserts a specialDate into the aggregation {@link #getSpecialDates specialDates}.
      *
      * @since 1.56
@@ -90217,6 +90376,16 @@ declare module "sap/m/PlanningCalendarRow" {
      */
     removeAllIntervalHeaders(): CalendarAppointment[];
     /**
+     * Removes all the controls from the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * Additionally, it unregisters them from the hosting UIArea.
+     *
+     * @since 1.128
+     *
+     * @returns An array of the removed elements (might be empty)
+     */
+    removeAllNonWorkingPeriods(): NonWorkingPeriod[];
+    /**
      * Removes all the controls from the aggregation {@link #getSpecialDates specialDates}.
      *
      * Additionally, it unregisters them from the hosting UIArea.
@@ -90263,6 +90432,19 @@ declare module "sap/m/PlanningCalendarRow" {
        */
       vIntervalHeader: int | string | CalendarAppointment
     ): CalendarAppointment | null;
+    /**
+     * Removes a nonWorkingPeriod from the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns The removed nonWorkingPeriod or `null`
+     */
+    removeNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod to remove or its index or id
+       */
+      vNonWorkingPeriod: int | string | NonWorkingPeriod
+    ): NonWorkingPeriod | null;
     /**
      * Removes a specialDate from the aggregation {@link #getSpecialDates specialDates}.
      *
@@ -90315,13 +90497,13 @@ declare module "sap/m/PlanningCalendarRow" {
      * Specifics based on the intervals (hours, days or months) displayed in the `PlanningCalendar` views:
      *
      * Hours:
-     *  For views where the displayed intervals are hours, the placeholder snaps on every interval of 30 minutes.
+     *  For views where the displayed intervals are hours, the placeholder snaps on every interval of 15 minutes.
      * After the appointment is dropped, the {@link #event:appointmentDrop appointmentDrop} event is fired,
      * containing the new start and end UI5Date or JavaScript Date objects.
      *  For example, an appointment with start date "Nov 13 2017 12:17:00" and end date "Nov 13 2017 12:45:30"
      * lasts for 27 minutes and 30 seconds. After dragging and dropping to a new time, the possible new start
-     * date has time that is either "hh:00:00" or "hh:30:00" because of the placeholder that can snap on every
-     * 30 minutes. The new end date is calculated to be 27 minutes and 30 seconds later and would be either
+     * date has time that is either "hh:00:00" or "hh:15:00" because of the placeholder that can snap on every
+     * 15 minutes. The new end date is calculated to be 27 minutes and 30 seconds later and would be either
      * "hh:27:30" or "hh:57:30".
      *
      * Days:
@@ -90391,7 +90573,7 @@ declare module "sap/m/PlanningCalendarRow" {
      * Specifics based on the intervals (hours, days or months) displayed in the `PlanningCalendar` views:
      *
      * Hours: For views where the displayed intervals are hours, the appointment snaps on every interval of
-     * 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event
+     * 15 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event
      * is fired, containing the new start and end UI5Date or JavaScript Date objects.
      *
      * Days: For views where intervals are days, the appointment snaps to the end of the day. After the resize
@@ -90647,13 +90829,13 @@ declare module "sap/m/PlanningCalendarRow" {
      * Specifics based on the intervals (hours, days or months) displayed in the `PlanningCalendar` views:
      *
      * Hours:
-     *  For views where the displayed intervals are hours, the placeholder snaps on every interval of 30 minutes.
+     *  For views where the displayed intervals are hours, the placeholder snaps on every interval of 15 minutes.
      * After the appointment is dropped, the {@link #event:appointmentDrop appointmentDrop} event is fired,
      * containing the new start and end UI5Date or JavaScript Date objects.
      *  For example, an appointment with start date "Nov 13 2017 12:17:00" and end date "Nov 13 2017 12:45:30"
      * lasts for 27 minutes and 30 seconds. After dragging and dropping to a new time, the possible new start
-     * date has time that is either "hh:00:00" or "hh:30:00" because of the placeholder that can snap on every
-     * 30 minutes. The new end date is calculated to be 27 minutes and 30 seconds later and would be either
+     * date has time that is either "hh:00:00" or "hh:15:00" because of the placeholder that can snap on every
+     * 15 minutes. The new end date is calculated to be 27 minutes and 30 seconds later and would be either
      * "hh:27:30" or "hh:57:30".
      *
      * Days:
@@ -90714,7 +90896,7 @@ declare module "sap/m/PlanningCalendarRow" {
      * Specifics based on the intervals (hours, days or months) displayed in the `PlanningCalendar` views:
      *
      * Hours: For views where the displayed intervals are hours, the appointment snaps on every interval of
-     * 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event
+     * 15 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event
      * is fired, containing the new start and end UI5Date or JavaScript Date objects.
      *
      * Days: For views where intervals are days, the appointment snaps to the end of the day. After the resize
@@ -90768,6 +90950,17 @@ declare module "sap/m/PlanningCalendarRow" {
     appointments?:
       | CalendarAppointment[]
       | CalendarAppointment
+      | AggregationBindingInfo
+      | `{${string}}`;
+
+    /**
+     * Sets the provided period to be displayed as a non-working.
+     *
+     * @since 1.128
+     */
+    nonWorkingPeriods?:
+      | NonWorkingPeriod[]
+      | NonWorkingPeriod
       | AggregationBindingInfo
       | `{${string}}`;
 
@@ -91523,8 +91716,6 @@ declare module "sap/m/plugins/CellSelector" {
    * 	 - Drag for rows is active
    * 	 - If used in combination with {@link sap.ui.table.Table#cellClick} or {@link sap.m.Table#itemPress }
    *
-   * 	 - If the `sap.ui.table.SelectionBehavior.RowOnly` or `sap.ui.table.SelectionBehavior.Row` selection
-   *     behavior is used in the `sap.ui.table.Table`
    * 	 - If the `sap.m.ListType.SingleSelectMaster` mode is used in the `sap.m.Table`
    *
    * When the `CellSelector` is used in combination with the {@link sap.ui.mdc.Table}, modifying the following
@@ -123666,6 +123857,8 @@ declare module "sap/m/SinglePlanningCalendar" {
 
   import CalendarAppointment from "sap/ui/unified/CalendarAppointment";
 
+  import NonWorkingPeriod from "sap/ui/unified/NonWorkingPeriod";
+
   import DateRange from "sap/ui/unified/DateRange";
 
   import DateTypeRange from "sap/ui/unified/DateTypeRange";
@@ -123818,6 +124011,19 @@ declare module "sap/m/SinglePlanningCalendar" {
        * The appointment to add; if empty, nothing is inserted
        */
       oAppointment: CalendarAppointment
+    ): this;
+    /**
+     * Adds some nonWorkingPeriod to the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    addNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod to add; if empty, nothing is inserted
+       */
+      oNonWorkingPeriod: NonWorkingPeriod
     ): this;
     /**
      * Adds a selected date to the grid.
@@ -124432,6 +124638,14 @@ declare module "sap/m/SinglePlanningCalendar" {
      */
     destroyAppointments(): this;
     /**
+     * Destroys all the nonWorkingPeriods in the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    destroyNonWorkingPeriods(): this;
+    /**
      * Destroys all the selectedDates in the aggregation {@link #getSelectedDates selectedDates}.
      *
      *
@@ -124981,6 +125195,16 @@ declare module "sap/m/SinglePlanningCalendar" {
      */
     getLegend(): ID | null;
     /**
+     * Gets content of aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * Sets the provided period to be displayed as a non-working.
+     *
+     * **Note:** The visualization of non-working periods is present in all views that include hours representation.
+     *
+     * @since 1.128
+     */
+    getNonWorkingPeriods(): NonWorkingPeriod[];
+    /**
      * Gets current value of property {@link #getScaleFactor scaleFactor}.
      *
      * Determines scale factor for the appointments.
@@ -125154,6 +125378,20 @@ declare module "sap/m/SinglePlanningCalendar" {
       oAppointment: CalendarAppointment
     ): int;
     /**
+     * Checks for the provided `sap.ui.unified.NonWorkingPeriod` in the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     * and returns its index if found or -1 otherwise.
+     *
+     * @since 1.128
+     *
+     * @returns The index of the provided control in the aggregation if found, or -1 otherwise
+     */
+    indexOfNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod whose index is looked for
+       */
+      oNonWorkingPeriod: NonWorkingPeriod
+    ): int;
+    /**
      * Checks for the provided `sap.ui.unified.DateRange` in the aggregation {@link #getSelectedDates selectedDates}.
      * and returns its index if found or -1 otherwise.
      *
@@ -125226,6 +125464,25 @@ declare module "sap/m/SinglePlanningCalendar" {
        * The `0`-based index the appointment should be inserted at; for a negative value of `iIndex`, the appointment
        * is inserted at position 0; for a value greater than the current size of the aggregation, the appointment
        * is inserted at the last position
+       */
+      iIndex: int
+    ): this;
+    /**
+     * Inserts a nonWorkingPeriod into the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    insertNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod to insert; if empty, nothing is inserted
+       */
+      oNonWorkingPeriod: NonWorkingPeriod,
+      /**
+       * The `0`-based index the nonWorkingPeriod should be inserted at; for a negative value of `iIndex`, the
+       * nonWorkingPeriod is inserted at position 0; for a value greater than the current size of the aggregation,
+       * the nonWorkingPeriod is inserted at the last position
        */
       iIndex: int
     ): this;
@@ -125315,6 +125572,16 @@ declare module "sap/m/SinglePlanningCalendar" {
      */
     removeAllAppointments(): CalendarAppointment[];
     /**
+     * Removes all the controls from the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * Additionally, it unregisters them from the hosting UIArea.
+     *
+     * @since 1.128
+     *
+     * @returns An array of the removed elements (might be empty)
+     */
+    removeAllNonWorkingPeriods(): NonWorkingPeriod[];
+    /**
      * Removes the selected dates of the grid.
      *
      *
@@ -125352,6 +125619,19 @@ declare module "sap/m/SinglePlanningCalendar" {
        */
       vAppointment: int | string | CalendarAppointment
     ): CalendarAppointment | null;
+    /**
+     * Removes a nonWorkingPeriod from the aggregation {@link #getNonWorkingPeriods nonWorkingPeriods}.
+     *
+     * @since 1.128
+     *
+     * @returns The removed nonWorkingPeriod or `null`
+     */
+    removeNonWorkingPeriod(
+      /**
+       * The nonWorkingPeriod to remove or its index or id
+       */
+      vNonWorkingPeriod: int | string | NonWorkingPeriod
+    ): NonWorkingPeriod | null;
     /**
      * Removes a selectedDate from the aggregation {@link #getSelectedDates selectedDates}.
      *
@@ -125875,6 +126155,19 @@ declare module "sap/m/SinglePlanningCalendar" {
     appointments?:
       | CalendarAppointment[]
       | CalendarAppointment
+      | AggregationBindingInfo
+      | `{${string}}`;
+
+    /**
+     * Sets the provided period to be displayed as a non-working.
+     *
+     * **Note:** The visualization of non-working periods is present in all views that include hours representation.
+     *
+     * @since 1.128
+     */
+    nonWorkingPeriods?:
+      | NonWorkingPeriod[]
+      | NonWorkingPeriod
       | AggregationBindingInfo
       | `{${string}}`;
 
@@ -158012,6 +158305,12 @@ declare module "sap/m/upload/UploadSet" {
      * The file that fails to meet the file size restriction specified in the `maxFileSize` property.
      */
     item?: UploadSetItem;
+
+    /**
+     * The size of a file in MB, that fails to meet the file size restriction specified in the `maxFileSize`
+     * property.
+     */
+    fileSize?: float;
   }
 
   /**
@@ -171404,6 +171703,8 @@ declare namespace sap {
     "sap/m/p13n/GroupController": undefined;
 
     "sap/m/p13n/GroupPanel": undefined;
+
+    "sap/m/p13n/MessageStrip": undefined;
 
     "sap/m/p13n/MetadataHelper": undefined;
 
