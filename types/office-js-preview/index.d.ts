@@ -90252,7 +90252,7 @@ declare namespace Word {
          * @remarks
          * [Api set: WordApi 1.8]
          */
-        popupOptions: Word.CritiquePopupOptions;
+        popupOptions?: Word.CritiquePopupOptions;
         /**
          * Gets the start index of the critique inside paragraph.
          *
