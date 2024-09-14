@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "name": "@types/parse-server",
+    "version": "7.2.0",
+    "projects": [
+        "https://parseplatform.org/"
+    ],
+    "dependencies": {
+        "@types/node": "*"
+    },
+    "devDependencies": {
+        "@types/parse-server": "workspace:.",
+        "@types/express": "*",
+        "@redis/client": "*"
+    },
+    "author": {
+        "name": "Ali Nosrati"
+    }
+}
