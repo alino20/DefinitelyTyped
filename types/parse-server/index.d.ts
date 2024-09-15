@@ -207,11 +207,16 @@ export interface MailAdapter {
    * - text: the raw text of the message
    * - subject: the subject of the email
    */
-  sendMail(options: {
+  sendMail: {(options: {
     to: string,
     text: string,
     subject: string
-  }): void
+  }): Promise<void>}
+  // Marked as optional in source code
+  // sendVerificationEmail?: {(options: { link:string, appName:string, user:any }):Promise<void>}
+  // sendPasswordResetEmail?: {(options: { link:string, appName:string, user:any }):Promise<void>}
+
+
 }
 
 type Config = Record<string, any>
@@ -317,13 +322,13 @@ declare class WSSAdapter {
 /** Options */
 
 export interface SchemaOptions {
-  afterMigration: Function  //  Execute a callback after running schema migrations.
-  beforeMigration: Function // Execute a callback before running schema migrations.
-  definitions: any // Rest representation on Parse.Schema https://docs.parseplatform.org/rest/guide/#adding-a-schema
-  deleteExtraFields: boolean // Is true if Parse Server should delete any fields not defined in a schema definition. This should only be used during development.
-  lockSchemas: Boolean // Is true if Parse Server will reject any attempts to modify the schema while the server is running.
-  recreateModifiedFields: Boolean // Is true if Parse Server should recreate any fields that are different between the current database schema and theschema definition. This should only be used during development.
-  strict: Boolean // Is true if Parse Server should exit if schema update fail.
+  afterMigration?: Function  //  Execute a callback after running schema migrations.
+  beforeMigration?: Function // Execute a callback before running schema migrations.
+  definitions?: any // Rest representation on Parse.Schema https://docs.parseplatform.org/rest/guide/#adding-a-schema
+  deleteExtraFields?: boolean // Is true if Parse Server should delete any fields not defined in a schema definition. This should only be used during development.
+  lockSchemas?: Boolean // Is true if Parse Server will reject any attempts to modify the schema while the server is running.
+  recreateModifiedFields?: Boolean // Is true if Parse Server should recreate any fields that are different between the current database schema and theschema definition. This should only be used during development.
+  strict?: Boolean // Is true if Parse Server should exit if schema update fail.
 }
 
 type Union = string | Function
@@ -351,11 +356,11 @@ export interface ParseServerOptions {
   customPages?: CustomPagesOptions //  custom pages for password validation and reset
   databaseAdapter?: Adapter<StorageAdapter> //  Adapter module for the database; any options that are not explicitly described here are passed directly to the database client.
   databaseOptions?: DatabaseOptions //  Options to pass to the database client
-  databaseURI: String //  The full URI to your database. Supported databases are mongodb or postgres.
+  databaseURI?: String //  The full URI to your database. Supported databases are mongodb or postgres.
   defaultLimit?: Number //  Default value for limit option on queries, defaults to `100`.
   directAccess?: Boolean //  Set to `true` if Parse requests within the same Node.js environment as Parse Server should be routed to Parse Server directly instead of via the HTTP interface. Default is `false`.<br><br>If set to `false` then Parse requests within the same Node.js environment as Parse Server are executed as HTTP requests sent to Parse Server via the `serverURL`. For example, a `Parse.Query` in Cloud Code is calling Parse Server via a HTTP request. The server is essentially making a HTTP request to itself, unnecessarily using network resources such as network ports.<br><br>⚠️ In environments where multiple Parse Server instances run behind a load balancer and Parse requests within the current Node.js environment should be routed via the load balancer and distributed as HTTP requests among all instances via the `serverURL`, this should be set to `false`.
   dotNetKey?: String //  Key for Unity and .Net SDK
-  emailAdapter?: Adapter<MailAdapter> //  Adapter module for email sending
+  emailAdapter?: Adapter<MailAdapter> | Object //  Adapter module for email sending
   emailVerifyTokenReuseIfValid?: Boolean //  Set to `true` if a email verification token should be reused in case another token is requested but there is a token that is still valid, i.e. has not expired. This avoids the often observed issue that a user requests multiple emails and does not know which link contains a valid token because each newly generated token would invalidate the previous token.<br><br>Default is `false`.<br>Requires option `verifyUserEmails: true`.
   emailVerifyTokenValidityDuration?: Number //  Set the validity duration of the email verification token in seconds after which the token expires. The token is used in the link that is set in the email. After the token expires, the link becomes invalid and a new link has to be sent. If the option is not set or set to `undefined`, then the token never expires.<br><br>For example, to expire the token after 2 hours, set a value of 7200 seconds (= 60 seconds  br><br>Default is `undefined`.<br>Requires option `verifyUserEmails: true`.
   enableAnonymousUsers?: Boolean //  Enable (or disable) anonymous users, defaults to true
@@ -383,7 +388,7 @@ export interface ParseServerOptions {
   logsFolder?: String //  Folder for the logs (defaults to './logs'); set to null to disable file based logging
   maintenanceKey?: String //  (Optional) The maintenance key is used for modifying internal and read-only fields of Parse Server.<br><br>⚠️ This key is not intended to be used as part of a regular operation of Parse Server. This key is intended to conduct out-of-band changes such as one-time migrations or data correction tasks. Internal fields are not officially documented and may change at any time without publication in release changelogs. We strongly advice not to rely on internal fields as part of your regular operation and to investigate the implications of any planned changes  the source coderrent version of Parse Server.
   maintenanceKeyIps?: String[] //  (Optional) Restricts the use of maintenance key permissions to a list of IP addresses or ranges.<br><br>This option accepts a list of single IP addresses, for example `['10.0.0.1', '10.0.0.2']`. You can also use CIDR notation to specify an IP address range, for example `['10.0.1.0/24']`.<br><br><b>Special scenarios:</b><br>- Setting an empty array `[]` means that the maintenance key cannot be used even in Parse Server Cloud Code. This value cannot be set via an environment variable as there is no way to pass an empty array to Parse Server via an environment variable.<br>- Setting `['0.0.0.0/0', '::0']` means to allow any IPv4 and IPv6 address to use the maintenance key and effectively disables the IP filter.<br><br><b>Considerations:</b><br>- IPv4 and IPv6 addresses are not compared against each other. Each IP version (IPv4 and IPv6) needs to be considered separately. For example, `['0.0.0.0/0']` allows any IPv4 address and blocks every IPv6 address. Conversely, `['::0']` allows any IPv6 address and blocks every IPv4 address.<br>- Keep in mind that the IP version in use depends on the network stack of the environment in which Parse Server runs. A local environment may use a different IP version than a remote environment. For example, it's possible that locally the value `['0.0.0.0/0']` allows the request IP because the environment is using IPv4, but when Parse Server is deployed remotely the request IP is blocked because the remote environment is using IPv6.<br>- When setting the option via an environment variable the notation is a comma-separated string, for example `"0.0.0.0/0,::0"`.<br>- IPv6 zone indices (`%` suffix) are not supported, for example `fe80::1%eth0`, `fe80::1%1` or `::1%lo`.<br><br>Defaults to `['127.0.0.1', '::1']` which means that only `localhost`, the server instance on which Parse Server runs, is allowed to use the maintenance key.
-  masterKey: String //  Your Parse Master Key
+  masterKey?: String //  Your Parse Master Key
   masterKeyIps?: String[] //  (Optional) Restricts the use of master key permissions to a list of IP addresses or ranges.<br><br>This option accepts a list of single IP addresses, for example `['10.0.0.1', '10.0.0.2']`. You can also use CIDR notation to specify an IP address range, for example `['10.0.1.0/24']`.<br><br><b>Special scenarios:</b><br>- Setting an empty array `[]` means that the master key cannot be used even in Parse Server Cloud Code. This value cannot be set via an environment variable as there is no way to pass an empty array to Parse Server via an environment variable.<br>- Setting `['0.0.0.0/0', '::0']` means to allow any IPv4 and IPv6 address to use the master key and effectively disables the IP filter.<br><br><b>Considerations:</b><br>- IPv4 and IPv6 addresses are not compared against each other. Each IP version (IPv4 and IPv6) needs to be considered separately. For example, `['0.0.0.0/0']` allows any IPv4 address and blocks every IPv6 address. Conversely, `['::0']` allows any IPv6 address and blocks every IPv4 address.<br>- Keep in mind that the IP version in use depends on the network stack of the environment in which Parse Server runs. A local environment may use a different IP version than a remote environment. For example, it's possible that locally the value `['0.0.0.0/0']` allows the request IP because the environment is using IPv4, but when Parse Server is deployed remotely the request IP is blocked because the remote environment is using IPv6.<br>- When setting the option via an environment variable the notation is a comma-separated string, for example `"0.0.0.0/0,::0"`.<br>- IPv6 zone indices (`%` suffix) are not supported, for example `fe80::1%eth0`, `fe80::1%1` or `::1%lo`.<br><br>Defaults to `['127.0.0.1', '::1']` which means that only `localhost`, the server instance on which Parse Server runs, is allowed to use the master key.
   maxLimit?: Number //  Max value for limit option on queries, defaults to unlimited
   maxLogFiles?: Number | String //  Maximum number of logs to keep. If not set, no logs will be removed. This can be a number of files or number of days. If using days, add 'd' as the suffix. (default: null)
@@ -413,7 +418,7 @@ export interface ParseServerOptions {
   security?: SecurityOptions //  The security options to identify and report weak security settings.
   sendUserEmailVerification?: Boolean //  Set to `false` to prevent sending of verification email. Supports a function with a return value of `true` or `false` for conditional email sending.<br><br>Default is `true`.<br>
   serverCloseComplete?: Function //  Callback when server has closed
-  serverURL: String //  URL to your parse server with http:// or https://.
+  serverURL?: String //  URL to your parse server with http:// or https://.
   sessionLength?: Number //  Session duration, in seconds, defaults to 1 year
   silent?: Boolean //  Disables console output
   startLiveQueryServer?: Boolean //  Starts the liveQuery server
@@ -427,15 +432,15 @@ export interface ParseServerOptions {
 
 export interface RateLimitOptions {
 
-  errorResponseMessage: String //  The error message that should be returned in the body of the HTTP 429 response when the rate limit is hit. Default is `Too many requests.`.
-  includeInternalRequests: Boolean //  Optional, if `true` the rate limit will also apply to requests that are made in by Cloud Code, default is `false`. Note that a public Cloud Code function that triggers internal requests may circumvent rate limiting and be vulnerable to attacks.
-  includeMasterKey: Boolean //  Optional, if `true` the rate limit will also apply to requests using the `masterKey`, default is `false`. Note that a public Cloud Code function that triggers internal requests using the `masterKey` may circumvent rate limiting and be vulnerable to attacks.
-  redisUrl: String //  Optional, the URL of the Redis server to store rate limit data. This allows to rate limit requests for multiple servers by calculating the sum of all requests across all servers. This is useful if multiple servers are processing requests behind a load balancer. For example, the limit of 10 requests is reached if each of 2 servers processed 5 requests.
-  requestCount: Number //  The number of requests that can be made per IP address within the time window set in `requestTimeWindow` before the rate limit is applied.
-  requestMethods: String[] //  Optional, the HTTP request methods to which the rate limit should be applied, default is all methods.
-  requestPath: String //  The path of the API route to be rate limited. Route paths, in combination with a request method, define the endpoints at which requests can be made. Route paths can be strings, string patterns, or regular expression. See: https://expressjs.com/en/guide/routing.html
-  requestTimeWindow: Number //  The window of time in milliseconds within which the number of requests set in `requestCount` can be made before the rate limit is applied.
-  zone: String //  The type of rate limit to apply. The following types are supported:<br><br>- `global`: rate limit based on the number of requests made by all users <br>- `ip`: rate limit based on the IP address of the request <br>- `user`: rate limit based on the user ID of the request <br>- `session`: rate limit based on the session token of the request <br><br><br>:default: 'ip'
+  errorResponseMessage?: String //  The error message that should be returned in the body of the HTTP 429 response when the rate limit is hit. Default is `Too many requests.`.
+  includeInternalRequests?: Boolean //  Optional, if `true` the rate limit will also apply to requests that are made in by Cloud Code, default is `false`. Note that a public Cloud Code function that triggers internal requests may circumvent rate limiting and be vulnerable to attacks.
+  includeMasterKey?: Boolean //  Optional, if `true` the rate limit will also apply to requests using the `masterKey`, default is `false`. Note that a public Cloud Code function that triggers internal requests using the `masterKey` may circumvent rate limiting and be vulnerable to attacks.
+  redisUrl?: String //  Optional, the URL of the Redis server to store rate limit data. This allows to rate limit requests for multiple servers by calculating the sum of all requests across all servers. This is useful if multiple servers are processing requests behind a load balancer. For example, the limit of 10 requests is reached if each of 2 servers processed 5 requests.
+  requestCount?: Number //  The number of requests that can be made per IP address within the time window set in `requestTimeWindow` before the rate limit is applied.
+  requestMethods?: String[] //  Optional, the HTTP request methods to which the rate limit should be applied, default is all methods.
+  requestPath?: String //  The path of the API route to be rate limited. Route paths, in combination with a request method, define the endpoints at which requests can be made. Route paths can be strings, string patterns, or regular expression. See: https://expressjs.com/en/guide/routing.html
+  requestTimeWindow?: Number //  The window of time in milliseconds within which the number of requests set in `requestCount` can be made before the rate limit is applied.
+  zone?: String //  The type of rate limit to apply. The following types are supported:<br><br>- `global`: rate limit based on the number of requests made by all users <br>- `ip`: rate limit based on the IP address of the request <br>- `user`: rate limit based on the user ID of the request <br>- `session`: rate limit based on the session token of the request <br><br><br>:default: 'ip'
 
 }
 
@@ -480,23 +485,23 @@ export interface CheckGroup {
 
 
 export interface SecurityOptions {
-  checkGroups: CheckGroup[]  // The security check groups to run. This allows to add custom security checks or override existing ones. Default are the groups defined in `CheckGroups.js`.
-  enableCheck: Boolean  // Is true if Parse Server should check for weak security settings.
-  enableCheckLog: Boolean  // Is true if the security check report should be written to logs. This should only be enabled temporarily to not expose weak security settings in logs. 
+  checkGroups?: CheckGroup[]  // The security check groups to run. This allows to add custom security checks or override existing ones. Default are the groups defined in `CheckGroups.js`.
+  enableCheck?: Boolean  // Is true if Parse Server should check for weak security settings.
+  enableCheckLog?: Boolean  // Is true if the security check report should be written to logs. This should only be enabled temporarily to not expose weak security settings in logs. 
 }
 
 export interface PagesOptions {
 
-  customRoutes: PagesRoute[] // The custom routes.
-  customUrls: PagesCustomUrlsOptions // The URLs to the custom pages.
-  enableLocalization: Boolean // Is true if pages should be localized; this has no effect on custom page redirects.
-  enableRouter: Boolean // Is true if the pages router should be enabled; this is required for any of the pages options to take effect. Caution, this is an experimental feature that may not be appropriate for production.
-  forceRedirect: Boolean // Is true if responses should always be redirects and never content, false if the response type should depend on the request type (GET request -> content response; POST request -> redirect response).
-  localizationFallbackLocale: String // The fallback locale for localization if no matching translation is provided for the given locale. This is only relevant when providing translation resources via JSON file.
-  localizationJsonPath: String // The path to the JSON file for localization; the translations will be used to fill template placeholders according to the locale.
-  pagesEndpoint: String // The API endpoint for the pages. Default is 'apps'.
-  pagesPath: String // The path to the pages directory; this also defines where the static endpoint '/apps' points to. Default is the './public/' directory.
-  placeholders: Object // The placeholder keys and values which will be filled in pages; this can be a simple object or a callback function.
+  customRoutes?: PagesRoute[] // The custom routes.
+  customUrls?: PagesCustomUrlsOptions // The URLs to the custom pages.
+  enableLocalization?: Boolean // Is true if pages should be localized; this has no effect on custom page redirects.
+  enableRouter?: Boolean // Is true if the pages router should be enabled; this is required for any of the pages options to take effect. Caution, this is an experimental feature that may not be appropriate for production.
+  forceRedirect?: Boolean // Is true if responses should always be redirects and never content, false if the response type should depend on the request type (GET request -> content response; POST request -> redirect response).
+  localizationFallbackLocale?: String // The fallback locale for localization if no matching translation is provided for the given locale. This is only relevant when providing translation resources via JSON file.
+  localizationJsonPath?: String // The path to the JSON file for localization; the translations will be used to fill template placeholders according to the locale.
+  pagesEndpoint?: String // The API endpoint for the pages. Default is 'apps'.
+  pagesPath?: String // The path to the pages directory; this also defines where the static endpoint '/apps' points to. Default is the './public/' directory.
+  placeholders?: Object // The placeholder keys and values which will be filled in pages; this can be a simple object or a callback function.
 }
 
 export interface PagesRoute {
@@ -506,101 +511,101 @@ export interface PagesRoute {
 }
 
 export interface PagesCustomUrlsOptions {
-  emailVerificationLinkExpired: String // The URL to the custom page for email verification -> link expired.
-  emailVerificationLinkInvalid: String // The URL to the custom page for email verification -> link invalid.
-  emailVerificationSendFail: String // The URL to the custom page for email verification -> link send fail.
-  emailVerificationSendSuccess: String // The URL to the custom page for email verification -> resend link -> success.
-  emailVerificationSuccess: String // The URL to the custom page for email verification -> success.
-  passwordReset: String // The URL to the custom page for password reset.
-  passwordResetLinkInvalid: String // The URL to the custom page for password reset -> link invalid.
-  passwordResetSuccess: String // The URL to the custom page for password reset -> success.
+  emailVerificationLinkExpired?: String // The URL to the custom page for email verification -> link expired.
+  emailVerificationLinkInvalid?: String // The URL to the custom page for email verification -> link invalid.
+  emailVerificationSendFail?: String // The URL to the custom page for email verification -> link send fail.
+  emailVerificationSendSuccess?: String // The URL to the custom page for email verification -> resend link -> success.
+  emailVerificationSuccess?: String // The URL to the custom page for email verification -> success.
+  passwordReset?: String // The URL to the custom page for password reset.
+  passwordResetLinkInvalid?: String // The URL to the custom page for password reset -> link invalid.
+  passwordResetSuccess?: String // The URL to the custom page for password reset -> success.
 }
 
 export interface CustomPagesOptions {
-  choosePassword: String // The URL to the custom page for choosing a password.
-  expiredVerificationLink: String // The URL to the custom page for expired verification link.
-  invalidLink: String // The URL to the custom page for invalid link.
-  invalidPasswordResetLink: String // The URL to the custom page for invalid password reset link.
-  invalidVerificationLink: String // The URL to the custom page for invalid verification link.
-  linkSendFail: String // The URL to the custom page for link send fail.
-  linkSendSuccess: String // The URL to the custom page for link send success.
-  parseFrameURL: String // The URL to the custom page for masking user-facing pages.
-  passwordResetSuccess: String // The URL to the custom page for password reset success.
-  verifyEmailSuccess: String // The URL to the custom page for verify email success.
+  choosePassword?: String // The URL to the custom page for choosing a password.
+  expiredVerificationLink?: String // The URL to the custom page for expired verification link.
+  invalidLink?: String // The URL to the custom page for invalid link.
+  invalidPasswordResetLink?: String // The URL to the custom page for invalid password reset link.
+  invalidVerificationLink?: String // The URL to the custom page for invalid verification link.
+  linkSendFail?: String // The URL to the custom page for link send fail.
+  linkSendSuccess?: String // The URL to the custom page for link send success.
+  parseFrameURL?: String // The URL to the custom page for masking user-facing pages.
+  passwordResetSuccess?: String // The URL to the custom page for password reset success.
+  verifyEmailSuccess?: String // The URL to the custom page for verify email success.
 }
 
 export interface LiveQueryOptions {
-  classNames: String[] // The parse-server's LiveQuery classNames
-  pubSubAdapter: Adapter<PubSubAdapter> // LiveQuery pubsub adapter
-  redisOptions: any // parse-server's LiveQuery redisOptions
-  redisURL: String // parse-server's LiveQuery redisURL
-  wssAdapter: Adapter<WSSAdapter> // Adapter module for the WebSocketServer
+  classNames?: String[] // The parse-server's LiveQuery classNames
+  pubSubAdapter?: Adapter<PubSubAdapter> // LiveQuery pubsub adapter
+  redisOptions?: any // parse-server's LiveQuery redisOptions
+  redisURL?: String // parse-server's LiveQuery redisURL
+  wssAdapter?: Adapter<WSSAdapter> // Adapter module for the WebSocketServer
 }
 
 export interface LiveQueryServerOptions {
-  appId: String // This string should match the appId in use by your Parse Server. If you deploy the LiveQuery server alongside Parse Server, the LiveQuery server will try to use the same appId.
-  cacheTimeout: Number // Number in milliseconds. When clients provide the sessionToken to the LiveQuery server, the LiveQuery server will try to fetch its ParseUser's objectId from parse server and store it in the cache. The value defines the duration of the cache. Check the following Security section and our protocol specification for details, defaults to 5 * 1000 ms (5 seconds).
-  keyPairs: any // A JSON object that serves as a whitelist of keys. It is used for validating clients when they try to connect to the LiveQuery server. Check the following Security section and our protocol specification for details.
-  logLevel: String // This string defines the log level of the LiveQuery server. We support VERBOSE, INFO, ERROR, NONE, defaults to INFO.
-  masterKey: String // This string should match the masterKey in use by your Parse Server. If you deploy the LiveQuery server alongside Parse Server, the LiveQuery server will try to use the same masterKey.
-  port: Number // The port to run the LiveQuery server, defaults to 1337.
-  pubSubAdapter: Adapter<PubSubAdapter> // LiveQuery pubsub adapter
-  redisOptions: any // parse-server's LiveQuery redisOptions
-  redisURL: String // parse-server's LiveQuery redisURL
-  serverURL: String // This string should match the serverURL in use by your Parse Server. If you deploy the LiveQuery server alongside Parse Server, the LiveQuery server will try to use the same serverURL.
-  websocketTimeout: Number // Number of milliseconds between ping/pong frames. The WebSocket server sends ping/pong frames to the clients to keep the WebSocket alive. This value defines the interval of the ping/pong frame from the server to clients, defaults to 10 * 1000 ms (10 s).
-  wssAdapter: Adapter<WSSAdapter> // Adapter module for the WebSocketServer
+  appId?: String // This string should match the appId in use by your Parse Server. If you deploy the LiveQuery server alongside Parse Server, the LiveQuery server will try to use the same appId.
+  cacheTimeout?: Number // Number in milliseconds. When clients provide the sessionToken to the LiveQuery server, the LiveQuery server will try to fetch its ParseUser's objectId from parse server and store it in the cache. The value defines the duration of the cache. Check the following Security section and our protocol specification for details, defaults to 5 * 1000 ms (5 seconds).
+  keyPairs?: any // A JSON object that serves as a whitelist of keys. It is used for validating clients when they try to connect to the LiveQuery server. Check the following Security section and our protocol specification for details.
+  logLevel?: String // This string defines the log level of the LiveQuery server. We support VERBOSE, INFO, ERROR, NONE, defaults to INFO.
+  masterKey?: String // This string should match the masterKey in use by your Parse Server. If you deploy the LiveQuery server alongside Parse Server, the LiveQuery server will try to use the same masterKey.
+  port?: Number // The port to run the LiveQuery server, defaults to 1337.
+  pubSubAdapter?: Adapter<PubSubAdapter> // LiveQuery pubsub adapter
+  redisOptions?: any // parse-server's LiveQuery redisOptions
+  redisURL?: String // parse-server's LiveQuery redisURL
+  serverURL?: String // This string should match the serverURL in use by your Parse Server. If you deploy the LiveQuery server alongside Parse Server, the LiveQuery server will try to use the same serverURL.
+  websocketTimeout?: Number // Number of milliseconds between ping/pong frames. The WebSocket server sends ping/pong frames to the clients to keep the WebSocket alive. This value defines the interval of the ping/pong frame from the server to clients, defaults to 10 * 1000 ms (10 s).
+  wssAdapter?: Adapter<WSSAdapter> // Adapter module for the WebSocketServer
 }
 
 export interface IdempotencyOptions {
-  paths: String[] // An array of paths for which the feature should be enabled. The mount path must not be included, for example instead of `/parse/functions/myFunction` specifiy `functions/myFunction`. The entries are interpreted as regular expression, for example `functions/.*` matches all functions, `jobs/.*` matches all jobs, `classes/.*` matches all classes, `.*` matches all paths.
-  ttl: Number // The duration in seconds after which a request record is discarded from the database, defaults to 300s.
+  paths?: String[] // An array of paths for which the feature should be enabled. The mount path must not be included, for example instead of `/parse/functions/myFunction` specifiy `functions/myFunction`. The entries are interpreted as regular expression, for example `functions/.*` matches all functions, `jobs/.*` matches all jobs, `classes/.*` matches all classes, `.*` matches all paths.
+  ttl?: Number // The duration in seconds after which a request record is discarded from the database, defaults to 300s.
 }
 
 export interface AccountLockoutOptions {
-  duration: Number // Set the duration in minutes that a locked-out account remains locked out before automatically becoming unlocked.<br><br>Valid values are greater than `0` and less than `100000`.
-  threshold: Number // Set the number of failed sign-in attempts that will cause a user account to be locked. If the account is locked. The account will unlock after the duration set in the `duration` option has passed and no further login attempts have been made.<br><br>Valid values are greater than `0` and less than `1000`.
-  unlockOnPasswordReset: Boolean // Set to `true`  if the account should be unlocked after a successful password reset.<br><br>Default is `false`.<br>Requires options `duration` and `threshold` to be set.
+  duration?: Number // Set the duration in minutes that a locked-out account remains locked out before automatically becoming unlocked.<br><br>Valid values are greater than `0` and less than `100000`.
+  threshold?: Number // Set the number of failed sign-in attempts that will cause a user account to be locked. If the account is locked. The account will unlock after the duration set in the `duration` option has passed and no further login attempts have been made.<br><br>Valid values are greater than `0` and less than `1000`.
+  unlockOnPasswordReset?: Boolean // Set to `true`  if the account should be unlocked after a successful password reset.<br><br>Default is `false`.<br>Requires options `duration` and `threshold` to be set.
 }
 
 export interface PasswordPolicyOptions {
-  doNotAllowUsername: Boolean // Set to `true` to disallow the username as part of the password.<br><br>Default is `false`.
-  maxPasswordAge: Number // Set the number of days after which a password expires. Login attempts fail if the user does not reset the password before expiration.
-  maxPasswordHistory: Number // Set the number of previous password that will not be allowed to be set as new password. If the option is not set or set to `0`, no previous passwords will be considered.<br><br>Valid values are >= `0` and <= `20`.<br>Default is `0`.
-  resetPasswordSuccessOnInvalidEmail: Boolean // Set to `true` if a request to reset the password should return a success response even if the provided email address is invalid, or `false` if the request should return an error response if the email address is invalid.<br><br>Default is `true`.
-  resetTokenReuseIfValid: Boolean // Set to `true` if a password reset token should be reused in case another token is requested but there is a token that is still valid, i.e. has not expired. This avoids the often observed issue that a user requests multiple emails and does not know which link contains a valid token because each newly generated token would invalidate the previous token.<br><br>Default is `false`.
-  resetTokenValidityDuration: Number // Set the validity duration of the password reset token in seconds after which the token expires. The token is used in the link that is set in the email. After the token expires, the link becomes invalid and a new link has to be sent. If the option is not set or set to `undefined`, then the token never expires.<br><br>For example, to expire the token after 2 hours, set a value of 7200 seconds (= 60 seconds * 60 minutes * 2 hours).<br><br>Default is `undefined`.
-  validationError: String // Set the error message to be sent.<br><br>Default is `Password does not meet the Password Policy requirements.`
-  validatorCallback: Function // Set a callback function to validate a password to be accepted.<br><br>If used in combination with `validatorPattern`, the password must pass both to be accepted.
-  validatorPattern: RegExp // Set a regular expression to validate a password to be accepted.<br><br>If used in combination with `validatorCallback`, the password must pass both to be
+  doNotAllowUsername?: Boolean // Set to `true` to disallow the username as part of the password.<br><br>Default is `false`.
+  maxPasswordAge?: Number // Set the number of days after which a password expires. Login attempts fail if the user does not reset the password before expiration.
+  maxPasswordHistory?: Number // Set the number of previous password that will not be allowed to be set as new password. If the option is not set or set to `0`, no previous passwords will be considered.<br><br>Valid values are >= `0` and <= `20`.<br>Default is `0`.
+  resetPasswordSuccessOnInvalidEmail?: Boolean // Set to `true` if a request to reset the password should return a success response even if the provided email address is invalid, or `false` if the request should return an error response if the email address is invalid.<br><br>Default is `true`.
+  resetTokenReuseIfValid?: Boolean // Set to `true` if a password reset token should be reused in case another token is requested but there is a token that is still valid, i.e. has not expired. This avoids the often observed issue that a user requests multiple emails and does not know which link contains a valid token because each newly generated token would invalidate the previous token.<br><br>Default is `false`.
+  resetTokenValidityDuration?: Number // Set the validity duration of the password reset token in seconds after which the token expires. The token is used in the link that is set in the email. After the token expires, the link becomes invalid and a new link has to be sent. If the option is not set or set to `undefined`, then the token never expires.<br><br>For example, to expire the token after 2 hours, set a value of 7200 seconds (= 60 seconds * 60 minutes * 2 hours).<br><br>Default is `undefined`.
+  validationError?: String // Set the error message to be sent.<br><br>Default is `Password does not meet the Password Policy requirements.`
+  validatorCallback?: Function // Set a callback function to validate a password to be accepted.<br><br>If used in combination with `validatorPattern`, the password must pass both to be accepted.
+  validatorPattern?: RegExp // Set a regular expression to validate a password to be accepted.<br><br>If used in combination with `validatorCallback`, the password must pass both to be
 }
 
 export interface FileUploadOptions {
-  enableForAnonymousUser: Boolean // Is true if file upload should be allowed for anonymous users.
-  enableForAuthenticatedUser: Boolean // Is true if file upload should be allowed for authenticated users.
-  enableForPublic: Boolean // Is true if file upload should be allowed for anyone, regardless of user authentication.
-  fileExtensions: String[] // Sets the allowed file extensions for uploading files. The extension is defined as an array of file extensions, or a regex pattern.<br><br>It is recommended to restrict the file upload extensions as much as possible. HTML files are especially problematic as they may be used by an attacker who uploads a HTML form to look legitimate under your app's domain name, or to compromise the session token of another user via accessing the browser's local storage.<br><br>Defaults to `^(?!(h|H)(t|T)(m|M)(l|L)?$)` which allows any file extension except HTML files.
+  enableForAnonymousUser?: Boolean // Is true if file upload should be allowed for anonymous users.
+  enableForAuthenticatedUser?: Boolean // Is true if file upload should be allowed for authenticated users.
+  enableForPublic?: Boolean // Is true if file upload should be allowed for anyone, regardless of user authentication.
+  fileExtensions?: String[] // Sets the allowed file extensions for uploading files. The extension is defined as an array of file extensions, or a regex pattern.<br><br>It is recommended to restrict the file upload extensions as much as possible. HTML files are especially problematic as they may be used by an attacker who uploads a HTML form to look legitimate under your app's domain name, or to compromise the session token of another user via accessing the browser's local storage.<br><br>Defaults to `^(?!(h|H)(t|T)(m|M)(l|L)?$)` which allows any file extension except HTML files.
 }
 
 export interface DatabaseOptions {
-  enableSchemaHooks: boolean // Enables database real-time hooks to update single schema cache. Set to `true` if using multiple Parse Servers instances connected to the same database. Failing to do so will cause a schema change to not propagate to all instances and re-syncing will only happen when the instances restart. To use this feature with MongoDB, a replica set cluster with [change stream](https://docs.mongodb.com/manual/changeStreams/#availability) support is required.
-  maxPoolSize: Number // The MongoDB driver option to set the maximum number of opened, cached, ready-to-use database connections maintained by the driver.
-  maxStalenessSeconds: number // The MongoDB driver option to set the maximum replication lag for reads from secondary nodes.
-  maxTimeMS: Number //  The MongoDB driver option to set a cumulative time limit in milliseconds for processing operations on a cursor.
-  retryWrites: Boolean //  The MongoDB driver option to set whether to retry failed writes.
-  schemaCacheTtl: Number //  The duration in seconds after which the schema cache expires and will be refetched from the database. Use this option if using multiple Parse Servers instances connected to the same database. A low duration will cause the schema cache to be updated too often, causing unnecessary database reads. A high duration will cause the schema to be updated too rarely, increasing the time required until schema changes propagate to all server instances. This feature can be used as an alternative or in conjunction with the option `enableSchemaHooks`. Default is infinite which means the schema cache never expires.
+  enableSchemaHooks?: boolean // Enables database real-time hooks to update single schema cache. Set to `true` if using multiple Parse Servers instances connected to the same database. Failing to do so will cause a schema change to not propagate to all instances and re-syncing will only happen when the instances restart. To use this feature with MongoDB, a replica set cluster with [change stream](https://docs.mongodb.com/manual/changeStreams/#availability) support is required.
+  maxPoolSize?: Number // The MongoDB driver option to set the maximum number of opened, cached, ready-to-use database connections maintained by the driver.
+  maxStalenessSeconds?: number // The MongoDB driver option to set the maximum replication lag for reads from secondary nodes.
+  maxTimeMS?: Number //  The MongoDB driver option to set a cumulative time limit in milliseconds for processing operations on a cursor.
+  retryWrites?: Boolean //  The MongoDB driver option to set whether to retry failed writes.
+  schemaCacheTtl?: Number //  The duration in seconds after which the schema cache expires and will be refetched from the database. Use this option if using multiple Parse Servers instances connected to the same database. A low duration will cause the schema cache to be updated too often, causing unnecessary database reads. A high duration will cause the schema to be updated too rarely, increasing the time required until schema changes propagate to all server instances. This feature can be used as an alternative or in conjunction with the option `enableSchemaHooks`. Default is infinite which means the schema cache never expires.
 }
 
 declare class AuthAdapter {
-  enabled: boolean // Is `true` if the auth adapter is enabled, `false` otherwise.
+  enabled?: boolean // Is `true` if the auth adapter is enabled, `false` otherwise.
 }
 
 export interface LogLevels {
-  cloudFunctionError: string; // Log level used by the Cloud Code Functions on error. Default is `error`.
-  cloudFunctionSuccess: string; // Log level used by the Cloud Code Functions on success. Default is `info`.
-  triggerAfter: string; // Log level used by the Cloud Code Triggers `afterSave`, `afterDelete`, `afterFind`, `afterLogout`. Default is `info`.
-  triggerBeforeError: string; // Log level used by the Cloud Code Triggers `beforeSave`, `beforeDelete`, `beforeFind`, `beforeLogin` on error. Default is `error`.
-  triggerBeforeSuccess: string; // Log level used by the Cloud Code Triggers `beforeSave`, `beforeDelete`, `beforeFind`, `beforeLogin` on success. Default is `info`.
+  cloudFunctionError?: string; // Log level used by the Cloud Code Functions on error. Default is `error`.
+  cloudFunctionSuccess?: string; // Log level used by the Cloud Code Functions on success. Default is `info`.
+  triggerAfter?: string; // Log level used by the Cloud Code Triggers `afterSave`, `afterDelete`, `afterFind`, `afterLogout`. Default is `info`.
+  triggerBeforeError?: string; // Log level used by the Cloud Code Triggers `beforeSave`, `beforeDelete`, `beforeFind`, `beforeLogin` on error. Default is `error`.
+  triggerBeforeSuccess?: string; // Log level used by the Cloud Code Triggers `beforeSave`, `beforeDelete`, `beforeFind`, `beforeLogin` on success. Default is `info`.
 }
 
 type METHOD = "POST" | "GET" | "PUT" | "DELETE"
