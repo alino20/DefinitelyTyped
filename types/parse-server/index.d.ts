@@ -867,6 +867,7 @@ declare namespace SchemaMigrations {
 
 export default ParseServer;
 export {
+  ParseServer,
   S3Adapter,
   GCSAdapter,
   InMemoryCacheAdapter,
