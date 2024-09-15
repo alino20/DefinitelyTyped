@@ -1,16 +1,13 @@
 // Import the type from the external package
-import  { Express } from 'express';
-import  { Server } from 'http';
-import  { RedisClientOptions, RedisClientType } from "@redis/client"
-import {FileSystemAdapter} from "@parse/fs-files-adapter"
+import { FileSystemAdapter } from "@parse/fs-files-adapter";
+import { RedisClientOptions, RedisClientType } from "@redis/client";
+import { Express } from 'express';
+import { Server } from 'http';
 
 /** Adapters */
 
 type Adapter<T> = string | T;
-type NumberOrBoolean = number | boolean;
-type NumberOrString = number | string;
 type ProtectedFields = any;
-type StringOrStringArray = string | string[];
 interface RequestKeywordDenylist {
   key: string,
   value: any,
@@ -19,7 +16,7 @@ interface RequestKeywordDenylist {
 /**
 * @interface AnalyticsAdapter
 */
-interface AnalyticsAdapter {
+export interface AnalyticsAdapter {
   /**
   @param {any} parameters: the analytics request body, analytics info will be in the dimensions property
   @param {Request} req: the original http request
@@ -38,7 +35,7 @@ interface AnalyticsAdapter {
 /**
  * @interface
  */
-interface CacheAdapter {
+export interface CacheAdapter {
   /**
    * Get a value in the cache
    * @param {String} key Cache key to get
@@ -71,7 +68,7 @@ type StorageClass = any;
 type QueryType = any;
 type mixed = unknown
 
-interface QueryOptions {
+export interface QueryOptions {
   skip?: number,
   limit?: number,
   acl?: string[],
@@ -90,14 +87,8 @@ interface QueryOptions {
   comment?: string,
 }
 
-interface UpdateQueryOptions {
-  many?: boolean,
-  upsert?: boolean,
-}
 
-type FullQueryOptions = QueryOptions & UpdateQueryOptions;
-
-interface StorageAdapter {
+export interface StorageAdapter {
   canSortOnJoinTables: boolean;
   schemaCacheTtl?: number;
   enableSchemaHooks: boolean;
@@ -208,7 +199,7 @@ interface StorageAdapter {
  * Mail Adapter prototype
  * A MailAdapter should implement at least sendMail()
  */
-interface MailAdapter {
+export interface MailAdapter {
   /**
    * A method for sending mail
    * @param options would have the parameters
@@ -228,7 +219,7 @@ type Config = Record<string, any>
 /**
  * @interface
  */
-interface FilesAdapter {
+export interface FilesAdapter {
   /** Responsible for storing the file in order to be retrieved later by its filename
    *
    * @param {string} filename - the filename to save
@@ -273,7 +264,7 @@ interface FilesAdapter {
 * Allows you to change the logger mechanism
 * Default is WinstonLoggerAdapter.js
 */
-interface LoggerAdapter {
+export interface LoggerAdapter {
   log(level: string, message: string): void
 }
 
@@ -291,7 +282,7 @@ declare class PubSubAdapter {
 /**
 * @interface Publisher
 */
-interface Publisher {
+export interface Publisher {
   /**
    * @param {String} channel the channel in which to publish
    * @param {String} message the message to publish
@@ -303,7 +294,7 @@ interface Publisher {
  * @interface Subscriber
  * @memberof PubSubAdapter
  */
-interface Subscriber {
+export interface Subscriber {
   /**
    * called when a new subscription the channel is required
    * @param {String} channel the channel to subscribe
@@ -325,7 +316,7 @@ declare class WSSAdapter {
 
 /** Options */
 
-interface SchemaOptions {
+export interface SchemaOptions {
   afterMigration: Function  //  Execute a callback after running schema migrations.
   beforeMigration: Function // Execute a callback before running schema migrations.
   definitions: any // Rest representation on Parse.Schema https://docs.parseplatform.org/rest/guide/#adding-a-schema
@@ -337,7 +328,7 @@ interface SchemaOptions {
 
 type Union = string | Function
 
-interface ParseServerOptions {
+export interface ParseServerOptions {
   accountLockout?: AccountLockoutOptions //  The account lockout policy for failed login attempts.
   allowClientClassCreation?: Boolean //  Enable (or disable) client class creation, defaults to false
   allowCustomObjectId?: Boolean //  Enable (or disable) custom objectId
@@ -434,7 +425,7 @@ interface ParseServerOptions {
 }
 
 
-interface RateLimitOptions {
+export interface RateLimitOptions {
 
   errorResponseMessage: String //  The error message that should be returned in the body of the HTTP 429 response when the rate limit is hit. Default is `Too many requests.`.
   includeInternalRequests: Boolean //  Optional, if `true` the rate limit will also apply to requests that are made in by Cloud Code, default is `false`. Note that a public Cloud Code function that triggers internal requests may circumvent rate limiting and be vulnerable to attacks.
@@ -451,7 +442,7 @@ interface RateLimitOptions {
 /**
 * The check state.
 */
-interface CheckState { none: 'none', fail: 'fail', success: 'success' }
+export interface CheckState { none: 'none', fail: 'fail', success: 'success' }
 
 declare class Check {
   /**
@@ -479,7 +470,7 @@ declare class Check {
   _validateParams(params: object): void;
 }
 
-interface CheckGroup {
+export interface CheckGroup {
   setName(): void
   name(): string
   setChecks(): void
@@ -488,13 +479,13 @@ interface CheckGroup {
 }
 
 
-interface SecurityOptions {
+export interface SecurityOptions {
   checkGroups: CheckGroup[]  // The security check groups to run. This allows to add custom security checks or override existing ones. Default are the groups defined in `CheckGroups.js`.
   enableCheck: Boolean  // Is true if Parse Server should check for weak security settings.
   enableCheckLog: Boolean  // Is true if the security check report should be written to logs. This should only be enabled temporarily to not expose weak security settings in logs. 
 }
 
-interface PagesOptions {
+export interface PagesOptions {
 
   customRoutes: PagesRoute[] // The custom routes.
   customUrls: PagesCustomUrlsOptions // The URLs to the custom pages.
@@ -508,13 +499,13 @@ interface PagesOptions {
   placeholders: Object // The placeholder keys and values which will be filled in pages; this can be a simple object or a callback function.
 }
 
-interface PagesRoute {
+export interface PagesRoute {
   handler: Function // The route handler that is an async function.
   method: String // The route method, e.g. 'GET' or 'POST'.
   path: String // The route path.
 }
 
-interface PagesCustomUrlsOptions {
+export interface PagesCustomUrlsOptions {
   emailVerificationLinkExpired: String // The URL to the custom page for email verification -> link expired.
   emailVerificationLinkInvalid: String // The URL to the custom page for email verification -> link invalid.
   emailVerificationSendFail: String // The URL to the custom page for email verification -> link send fail.
@@ -525,7 +516,7 @@ interface PagesCustomUrlsOptions {
   passwordResetSuccess: String // The URL to the custom page for password reset -> success.
 }
 
-interface CustomPagesOptions {
+export interface CustomPagesOptions {
   choosePassword: String // The URL to the custom page for choosing a password.
   expiredVerificationLink: String // The URL to the custom page for expired verification link.
   invalidLink: String // The URL to the custom page for invalid link.
@@ -538,7 +529,7 @@ interface CustomPagesOptions {
   verifyEmailSuccess: String // The URL to the custom page for verify email success.
 }
 
-interface LiveQueryOptions {
+export interface LiveQueryOptions {
   classNames: String[] // The parse-server's LiveQuery classNames
   pubSubAdapter: Adapter<PubSubAdapter> // LiveQuery pubsub adapter
   redisOptions: any // parse-server's LiveQuery redisOptions
@@ -546,7 +537,7 @@ interface LiveQueryOptions {
   wssAdapter: Adapter<WSSAdapter> // Adapter module for the WebSocketServer
 }
 
-interface LiveQueryServerOptions {
+export interface LiveQueryServerOptions {
   appId: String // This string should match the appId in use by your Parse Server. If you deploy the LiveQuery server alongside Parse Server, the LiveQuery server will try to use the same appId.
   cacheTimeout: Number // Number in milliseconds. When clients provide the sessionToken to the LiveQuery server, the LiveQuery server will try to fetch its ParseUser's objectId from parse server and store it in the cache. The value defines the duration of the cache. Check the following Security section and our protocol specification for details, defaults to 5 * 1000 ms (5 seconds).
   keyPairs: any // A JSON object that serves as a whitelist of keys. It is used for validating clients when they try to connect to the LiveQuery server. Check the following Security section and our protocol specification for details.
@@ -561,18 +552,18 @@ interface LiveQueryServerOptions {
   wssAdapter: Adapter<WSSAdapter> // Adapter module for the WebSocketServer
 }
 
-interface IdempotencyOptions {
+export interface IdempotencyOptions {
   paths: String[] // An array of paths for which the feature should be enabled. The mount path must not be included, for example instead of `/parse/functions/myFunction` specifiy `functions/myFunction`. The entries are interpreted as regular expression, for example `functions/.*` matches all functions, `jobs/.*` matches all jobs, `classes/.*` matches all classes, `.*` matches all paths.
   ttl: Number // The duration in seconds after which a request record is discarded from the database, defaults to 300s.
 }
 
-interface AccountLockoutOptions {
+export interface AccountLockoutOptions {
   duration: Number // Set the duration in minutes that a locked-out account remains locked out before automatically becoming unlocked.<br><br>Valid values are greater than `0` and less than `100000`.
   threshold: Number // Set the number of failed sign-in attempts that will cause a user account to be locked. If the account is locked. The account will unlock after the duration set in the `duration` option has passed and no further login attempts have been made.<br><br>Valid values are greater than `0` and less than `1000`.
   unlockOnPasswordReset: Boolean // Set to `true`  if the account should be unlocked after a successful password reset.<br><br>Default is `false`.<br>Requires options `duration` and `threshold` to be set.
 }
 
-interface PasswordPolicyOptions {
+export interface PasswordPolicyOptions {
   doNotAllowUsername: Boolean // Set to `true` to disallow the username as part of the password.<br><br>Default is `false`.
   maxPasswordAge: Number // Set the number of days after which a password expires. Login attempts fail if the user does not reset the password before expiration.
   maxPasswordHistory: Number // Set the number of previous password that will not be allowed to be set as new password. If the option is not set or set to `0`, no previous passwords will be considered.<br><br>Valid values are >= `0` and <= `20`.<br>Default is `0`.
@@ -584,14 +575,14 @@ interface PasswordPolicyOptions {
   validatorPattern: RegExp // Set a regular expression to validate a password to be accepted.<br><br>If used in combination with `validatorCallback`, the password must pass both to be
 }
 
-interface FileUploadOptions {
+export interface FileUploadOptions {
   enableForAnonymousUser: Boolean // Is true if file upload should be allowed for anonymous users.
   enableForAuthenticatedUser: Boolean // Is true if file upload should be allowed for authenticated users.
   enableForPublic: Boolean // Is true if file upload should be allowed for anyone, regardless of user authentication.
   fileExtensions: String[] // Sets the allowed file extensions for uploading files. The extension is defined as an array of file extensions, or a regex pattern.<br><br>It is recommended to restrict the file upload extensions as much as possible. HTML files are especially problematic as they may be used by an attacker who uploads a HTML form to look legitimate under your app's domain name, or to compromise the session token of another user via accessing the browser's local storage.<br><br>Defaults to `^(?!(h|H)(t|T)(m|M)(l|L)?$)` which allows any file extension except HTML files.
 }
 
-interface DatabaseOptions {
+export interface DatabaseOptions {
   enableSchemaHooks: boolean // Enables database real-time hooks to update single schema cache. Set to `true` if using multiple Parse Servers instances connected to the same database. Failing to do so will cause a schema change to not propagate to all instances and re-syncing will only happen when the instances restart. To use this feature with MongoDB, a replica set cluster with [change stream](https://docs.mongodb.com/manual/changeStreams/#availability) support is required.
   maxPoolSize: Number // The MongoDB driver option to set the maximum number of opened, cached, ready-to-use database connections maintained by the driver.
   maxStalenessSeconds: number // The MongoDB driver option to set the maximum replication lag for reads from secondary nodes.
@@ -604,7 +595,7 @@ declare class AuthAdapter {
   enabled: boolean // Is `true` if the auth adapter is enabled, `false` otherwise.
 }
 
-interface LogLevels {
+export interface LogLevels {
   cloudFunctionError: string; // Log level used by the Cloud Code Functions on error. Default is `error`.
   cloudFunctionSuccess: string; // Log level used by the Cloud Code Functions on success. Default is `info`.
   triggerAfter: string; // Log level used by the Cloud Code Triggers `afterSave`, `afterDelete`, `afterFind`, `afterLogout`. Default is `info`.
@@ -760,7 +751,7 @@ declare namespace TestUtils {
   function sleep(ms: number): Promise<void>
 }
 
-interface PushAdapter {
+export interface PushAdapter {
   /**
    * @param {any} body
    * @param {Parse.Installation[]} installations
