@@ -13859,10 +13859,16 @@ declare namespace Office {
          * Gets the email address type of a recipient.
          * 
          * @remarks
-         * **Important**: A `recipientType` property value isn't returned by the 
+         * **Important**:
+         *
+         * - A `recipientType` property value isn't returned by the 
          * {@link https://learn.microsoft.com/javascript/api/outlook/office.from?view=outlook-js-1.7#outlook-office-from-getasync-member(1) | Office.context.mailbox.item.from.getAsync}
          * and {@link https://learn.microsoft.com/javascript/api/outlook/office.organizer?view=outlook-js-1.7#outlook-office-organizer-getasync-member(1) | Office.context.mailbox.item.organizer.getAsync} methods.
          * The email sender or appointment organizer is always a user whose email address is on the Exchange server.
+         *
+         * - While composing a mail item, when you switch to a sender account that's on a different domain than that of the previously selected sender account,
+         * the value of the `recipientType` property for existing recipients isn't updated and will still be based on the domain of the previously selected account.
+         * To get the correct recipient types after switching accounts, you must first remove the existing recipients, then add them back to the mail item.
          */
         recipientType: MailboxEnums.RecipientType | string;
     }
@@ -19057,6 +19063,10 @@ declare namespace Office {
          * {@link Office.EmailAddressDetails | EmailAddressDetails} object instead of the contact's saved name.
          * For more details, see {@link https://github.com/OfficeDev/office-js/issues/2201 | related GitHub issue}.
          *
+         * While composing a mail item, when you switch to a sender account that's on a different domain than that of the previously selected sender account,
+         * the value of the `recipientType` property for existing recipients isn't updated and will still be based on the domain of the previously selected account.
+         * To get the correct recipient types after switching accounts, you must first remove the existing recipients, then add them back to the mail item.
+         *
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
          * @param callback - When the method completes, the function passed in the `callback` parameter is called with a single parameter, `asyncResult`,
@@ -19101,6 +19111,10 @@ declare namespace Office {
          * or profile card, your add-in's `Recipients.getAsync` call returns the contact's email address in the `displayName` property of the associated
          * {@link Office.EmailAddressDetails | EmailAddressDetails} object instead of the contact's saved name.
          * For more details, see {@link https://github.com/OfficeDev/office-js/issues/2201 | related GitHub issue}.
+         *
+         * While composing a mail item, when you switch to a sender account that's on a different domain than that of the previously selected sender account,
+         * the value of the `recipientType` property for existing recipients isn't updated and will still be based on the domain of the previously selected account.
+         * To get the correct recipient types after switching accounts, you must first remove the existing recipients, then add them back to the mail item.
          *
          * @param callback - When the method completes, the function passed in the `callback` parameter is called with a single parameter, `asyncResult`,
          *                 of type `Office.AsyncResult`. The `asyncResult.value` property of the result is an array of
