@@ -15050,7 +15050,13 @@ declare namespace Office {
          * {@link Office.MessageCompose | MessageCompose}, {@link Office.MessageRead | MessageRead},
          * {@link Office.AppointmentCompose | AppointmentCompose}, {@link Office.AppointmentRead | AppointmentRead}
          *
-         * **Important**: `item` can be null if your add-in supports pinning the task pane. For details on how to handle, see
+         * **Important**:
+         *
+         * - When calling `Office.context.mailbox.item` on a message, note that the Reading Pane in the Outlook client must be turned on.
+         * For guidance on how to configure the Reading Pane, see
+         * {@link https://support.microsoft.com/office/2fd687ed-7fc4-4ae3-8eab-9f9b8c6d53f0 | Use and configure the Reading Pane to preview messages}.
+         *
+         * - `item` can be null if your add-in supports pinning the task pane. For details on how to handle, see
          * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/pinnable-taskpane#implement-the-event-handler | Implement a pinnable task pane in Outlook}.
          */
         item?: Item & ItemCompose & ItemRead & Message & MessageCompose & MessageRead & Appointment & AppointmentCompose & AppointmentRead;
@@ -16241,9 +16247,15 @@ declare namespace Office {
      /**
      * The message compose mode of {@link Office.Item | Office.context.mailbox.item}.
      *
-     * **Important**: This is an internal Outlook object, not directly exposed through existing interfaces.
+     * **Important**:
+     *
+     * - This is an internal Outlook object, not directly exposed through existing interfaces.
      * You should treat this as a mode of `Office.context.mailbox.item`. For more information, refer to the
      * {@link https://learn.microsoft.com/javascript/api/requirement-sets/outlook/preview-requirement-set/office.context.mailbox.item | Object Model} page.
+     *
+     * - When calling `Office.context.mailbox.item` on a message, note that the Reading Pane in the Outlook client must be turned on.
+     * For guidance on how to configure the Reading Pane, see
+     * {@link https://support.microsoft.com/office/2fd687ed-7fc4-4ae3-8eab-9f9b8c6d53f0 | Use and configure the Reading Pane to preview messages}.
      *
      * Parent interfaces:
      *
@@ -17726,9 +17738,15 @@ declare namespace Office {
     /**
      * The message read mode of {@link Office.Item | Office.context.mailbox.item}.
      *
-     * **Important**: This is an internal Outlook object, not directly exposed through existing interfaces.
+     * **Important**:
+     *
+     * - This is an internal Outlook object, not directly exposed through existing interfaces.
      * You should treat this as a mode of `Office.context.mailbox.item`. For more information, refer to the
      * {@link https://learn.microsoft.com/javascript/api/requirement-sets/outlook/preview-requirement-set/office.context.mailbox.item | Object Model} page.
+     *
+     * - When calling `Office.context.mailbox.item` on a message, note that the Reading Pane in the Outlook client must be turned on.
+     * For guidance on how to configure the Reading Pane, see
+     * {@link https://support.microsoft.com/office/2fd687ed-7fc4-4ae3-8eab-9f9b8c6d53f0 | Use and configure the Reading Pane to preview messages}.
      *
      * Parent interfaces:
      *
