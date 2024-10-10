@@ -1,4 +1,4 @@
-// For Library Version: 1.128.0
+// For Library Version: 1.129.0
 
 declare module "sap/f/library" {
   export interface IShellBar {
@@ -3148,6 +3148,12 @@ declare module "sap/m/library" {
      * The column headers remain in a fixed position.
      */
     ColumnHeaders = "ColumnHeaders",
+    /**
+     * The group headers remain in a fixed position at the top of the page during vertical scrolling.
+     *
+     * @since 1.128
+     */
+    GroupHeaders = "GroupHeaders",
     /**
      * The header toolbar remains in a fixed position.
      *
@@ -55836,6 +55842,10 @@ declare module "sap/m/MessageBox" {
          */
         details?: string | object | (() => Promise<string | object>);
         /**
+         * The width of the MessageBox
+         */
+        contentWidth?: CSSSize;
+        /**
          * Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation
          * occurs.
          */
@@ -55962,6 +55972,10 @@ declare module "sap/m/MessageBox" {
          */
         details?: string | object | (() => Promise<string | object>);
         /**
+         * The width of the MessageBox
+         */
+        contentWidth?: CSSSize;
+        /**
          * Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation
          * occurs.
          */
@@ -56083,6 +56097,10 @@ declare module "sap/m/MessageBox" {
          */
         details?: string | object | (() => Promise<string | object>);
         /**
+         * The width of the MessageBox
+         */
+        contentWidth?: CSSSize;
+        /**
          * Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation
          * occurs.
          */
@@ -56201,6 +56219,10 @@ declare module "sap/m/MessageBox" {
          *     a default error message will be displayed
          */
         details?: string | object | (() => Promise<string | object>);
+        /**
+         * The width of the MessageBox
+         */
+        contentWidth?: CSSSize;
         /**
          * Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation
          * occurs.
@@ -56453,6 +56475,10 @@ declare module "sap/m/MessageBox" {
          */
         details?: string | object | (() => Promise<string | object>);
         /**
+         * The width of the MessageBox
+         */
+        contentWidth?: CSSSize;
+        /**
          * Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation
          * occurs.
          */
@@ -56571,6 +56597,10 @@ declare module "sap/m/MessageBox" {
          *     a default error message will be displayed
          */
         details?: string | object | (() => Promise<string | object>);
+        /**
+         * The width of the MessageBox
+         */
+        contentWidth?: CSSSize;
         /**
          * Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation
          * occurs.
@@ -59412,15 +59442,18 @@ declare module "sap/m/MessagePopoverItem" {
 declare module "sap/m/MessageStrip" {
   import { default as Control, $ControlSettings } from "sap/ui/core/Control";
 
+  import Link from "sap/m/Link";
+
   import Event from "sap/ui/base/Event";
 
   import { URI, MessageType } from "sap/ui/core/library";
 
-  import Link from "sap/m/Link";
-
   import ElementMetadata from "sap/ui/core/ElementMetadata";
 
-  import { PropertyBindingInfo } from "sap/ui/base/ManagedObject";
+  import {
+    PropertyBindingInfo,
+    AggregationBindingInfo,
+  } from "sap/ui/base/ManagedObject";
 
   /**
    * MessageStrip is a control that enables the embedding of application-related messages in the application.
@@ -59518,6 +59551,19 @@ declare module "sap/m/MessageStrip" {
      */
     static getMetadata(): ElementMetadata;
     /**
+     * Adds some control to the aggregation {@link #getControls controls}.
+     *
+     * @since 1.129
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    addControl(
+      /**
+       * The control to add; if empty, nothing is inserted
+       */
+      oControl: Link
+    ): this;
+    /**
      * Attaches event handler `fnFunction` to the {@link #event:close close} event of this `sap.m.MessageStrip`.
      *
      * When called, the context of the event handler (its `this`) will be bound to `oListener` if specified,
@@ -59570,6 +59616,14 @@ declare module "sap/m/MessageStrip" {
      */
     close(): void;
     /**
+     * Destroys all the controls in the aggregation {@link #getControls controls}.
+     *
+     * @since 1.129
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    destroyControls(): this;
+    /**
      * Destroys the link in the aggregation {@link #getLink link}.
      *
      *
@@ -59608,6 +59662,16 @@ declare module "sap/m/MessageStrip" {
       mParameters?: object
     ): this;
     /**
+     * Gets content of aggregation {@link #getControls controls}.
+     *
+     * List of `sap.m.Link` controls that replace the placeholders in the text. Placeholders are replaced according
+     * to their indexes. The first link in the aggregation replaces the placeholder with index %%0, and so on.
+     * **Note:** Placeholders are replaced if the `enableFormattedText` property is set to true.
+     *
+     * @since 1.129
+     */
+    getControls(): Link[];
+    /**
      * Gets current value of property {@link #getCustomIcon customIcon}.
      *
      * Determines a custom icon which is displayed. If none is set, the default icon for this message type is
@@ -59623,6 +59687,7 @@ declare module "sap/m/MessageStrip" {
      * Gets current value of property {@link #getEnableFormattedText enableFormattedText}.
      *
      * Determines the limited collection of HTML elements passed to the `text` property should be evaluated.
+     * The `text` property value is set as `htmlText` to an internal instance of {@link sap.m.FormattedText}
      *
      * **Note:** If this property is set to true the string passed to `text` property can evaluate the following
      * list of limited HTML elements. All other HTML elements and their nested content will not be rendered
@@ -59693,6 +59758,62 @@ declare module "sap/m/MessageStrip" {
      */
     getType(): MessageType;
     /**
+     * Checks for the provided `sap.m.Link` in the aggregation {@link #getControls controls}. and returns its
+     * index if found or -1 otherwise.
+     *
+     * @since 1.129
+     *
+     * @returns The index of the provided control in the aggregation if found, or -1 otherwise
+     */
+    indexOfControl(
+      /**
+       * The control whose index is looked for
+       */
+      oControl: Link
+    ): int;
+    /**
+     * Inserts a control into the aggregation {@link #getControls controls}.
+     *
+     * @since 1.129
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    insertControl(
+      /**
+       * The control to insert; if empty, nothing is inserted
+       */
+      oControl: Link,
+      /**
+       * The `0`-based index the control should be inserted at; for a negative value of `iIndex`, the control
+       * is inserted at position 0; for a value greater than the current size of the aggregation, the control
+       * is inserted at the last position
+       */
+      iIndex: int
+    ): this;
+    /**
+     * Removes all the controls from the aggregation {@link #getControls controls}.
+     *
+     * Additionally, it unregisters them from the hosting UIArea.
+     *
+     * @since 1.129
+     *
+     * @returns An array of the removed elements (might be empty)
+     */
+    removeAllControls(): Link[];
+    /**
+     * Removes a control from the aggregation {@link #getControls controls}.
+     *
+     * @since 1.129
+     *
+     * @returns The removed control or `null`
+     */
+    removeControl(
+      /**
+       * The control to remove or its index or id
+       */
+      vControl: int | string | Link
+    ): Link | null;
+    /**
      * Sets a new value for property {@link #getCustomIcon customIcon}.
      *
      * Determines a custom icon which is displayed. If none is set, the default icon for this message type is
@@ -59715,6 +59836,7 @@ declare module "sap/m/MessageStrip" {
      * Sets a new value for property {@link #getEnableFormattedText enableFormattedText}.
      *
      * Determines the limited collection of HTML elements passed to the `text` property should be evaluated.
+     * The `text` property value is set as `htmlText` to an internal instance of {@link sap.m.FormattedText}
      *
      * **Note:** If this property is set to true the string passed to `text` property can evaluate the following
      * list of limited HTML elements. All other HTML elements and their nested content will not be rendered
@@ -59854,6 +59976,7 @@ declare module "sap/m/MessageStrip" {
 
     /**
      * Determines the limited collection of HTML elements passed to the `text` property should be evaluated.
+     * The `text` property value is set as `htmlText` to an internal instance of {@link sap.m.FormattedText}
      *
      * **Note:** If this property is set to true the string passed to `text` property can evaluate the following
      * list of limited HTML elements. All other HTML elements and their nested content will not be rendered
@@ -59872,6 +59995,15 @@ declare module "sap/m/MessageStrip" {
      * Adds an sap.m.Link control which will be displayed at the end of the message.
      */
     link?: Link;
+
+    /**
+     * List of `sap.m.Link` controls that replace the placeholders in the text. Placeholders are replaced according
+     * to their indexes. The first link in the aggregation replaces the placeholder with index %%0, and so on.
+     * **Note:** Placeholders are replaced if the `enableFormattedText` property is set to true.
+     *
+     * @since 1.129
+     */
+    controls?: Link[] | Link | AggregationBindingInfo | `{${string}}`;
 
     /**
      * This event will be fired after the container is closed.
@@ -93877,7 +94009,6 @@ declare module "sap/m/plugins/UploadSetwithTable" {
    *     such as rename, download etc.
    *
    * @since 1.124
-   * @experimental (since 1.124)
    */
   export default class UploadSetwithTable extends UI5Element {
     /**
@@ -95566,8 +95697,6 @@ declare module "sap/m/plugins/UploadSetwithTable" {
 
   /**
    * Describes the settings that can be provided to the UploadSetwithTable constructor.
-   *
-   * @experimental (since 1.124)
    */
   export interface $UploadSetwithTableSettings extends $ElementSettings {
     /**
@@ -102854,10 +102983,12 @@ declare module "sap/m/RatingIndicator" {
    *     The preferred number of icons is between 5 (default) and 7. Responsive Behavior: You can display icons
    *     in 4 recommended sizes:
    * 	 - large - 32px
-   * 	 - medium(default) - 22px
-   * 	 - small - 16px
-   * 	 - XS - 12px  **Note:** If no icon size is set, the rating indicator will set it according to the
-   *     content density.
+   * 	 - medium(default) - 24px
+   * 	 - small - 22px
+   * 	 - XS - 12px  **Note:** It is not recommended to use the XS size as an editable rating indicator.
+   *     If an editable rating indicator is needed then it is recommended to set the size S or above to be compliant
+   *     with minimum touch size. **Note:** If no icon size is set, the rating indicator will set it according
+   *     to the content density.
    *
    * @since 1.14
    */
@@ -103216,7 +103347,7 @@ declare module "sap/m/RatingIndicator" {
      *
      * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure
      * that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations.
-     * Recommended size is 1.375rem (22px) for normal, 1rem (16px) for small, and 2rem (32px) for large icons
+     * Recommended size is 1.5rem (24px) for normal, 1.375rem (22px) for small, and 2rem (32px) for large icons
      * correspondingly.
      *
      *
@@ -103418,7 +103549,7 @@ declare module "sap/m/RatingIndicator" {
      *
      * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure
      * that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations.
-     * Recommended size is 1.375rem (22px) for normal, 1rem (16px) for small, and 2rem (32px) for large icons
+     * Recommended size is 1.5rem (24px) for normal, 1.375rem (22px) for small, and 2rem (32px) for large icons
      * correspondingly.
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
@@ -103553,7 +103684,7 @@ declare module "sap/m/RatingIndicator" {
     /**
      * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure
      * that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations.
-     * Recommended size is 1.375rem (22px) for normal, 1rem (16px) for small, and 2rem (32px) for large icons
+     * Recommended size is 1.5rem (24px) for normal, 1.375rem (22px) for small, and 2rem (32px) for large icons
      * correspondingly.
      */
     iconSize?: CSSSize | PropertyBindingInfo | `{${string}}`;
@@ -103675,6 +103806,8 @@ declare module "sap/m/ResponsivePopover" {
   import Button from "sap/m/Button";
 
   import { IBar, PlacementType, TitleAlignment } from "sap/m/library";
+
+  import Toolbar from "sap/m/Toolbar";
 
   import ElementMetadata from "sap/ui/core/ElementMetadata";
 
@@ -104027,6 +104160,14 @@ declare module "sap/m/ResponsivePopover" {
      */
     destroyEndButton(): this;
     /**
+     * Destroys the footer in the aggregation {@link #getFooter footer}.
+     *
+     * @since 1.129
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    destroyFooter(): this;
+    /**
      * Destroys the subHeader in the aggregation {@link #getSubHeader subHeader}.
      *
      *
@@ -104212,6 +104353,14 @@ declare module "sap/m/ResponsivePopover" {
      * @returns The button that is set as an endButton aggregation
      */
     getEndButton(): Button;
+    /**
+     * Gets content of aggregation {@link #getFooter footer}.
+     *
+     * The footer of this popover.
+     *
+     * @since 1.129
+     */
+    getFooter(): Toolbar;
     /**
      * Gets current value of property {@link #getHorizontalScrolling horizontalScrolling}.
      *
@@ -104548,6 +104697,19 @@ declare module "sap/m/ResponsivePopover" {
        * The button that will be set as an aggregation
        */
       oButton: Button
+    ): this;
+    /**
+     * Sets the aggregated {@link #getFooter footer}.
+     *
+     * @since 1.129
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setFooter(
+      /**
+       * The footer to set
+       */
+      oFooter: Toolbar
     ): this;
     /**
      * Sets a new value for property {@link #getHorizontalScrolling horizontalScrolling}.
@@ -104931,6 +105093,13 @@ declare module "sap/m/ResponsivePopover" {
      * in header, please use customHeader instead.
      */
     endButton?: Button;
+
+    /**
+     * The footer of this popover.
+     *
+     * @since 1.129
+     */
+    footer?: Toolbar;
 
     /**
      * InitialFocus is supported by both variants. Please see the documentation on sap.m.Popover#initialFocus
@@ -152126,15 +152295,14 @@ declare module "sap/m/upload/ActionsPlaceholder" {
   import { PropertyBindingInfo } from "sap/ui/base/ManagedObject";
 
   /**
-   * The control acts as placeholder to position specific action controls (Upload, PersonalizationSettings,
-   * VariantManagement) on headertoolbar of {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control.
+   * The control acts as placeholder to position specific action controls (Upload, Upload from cloud) on headertoolbar
+   * of table with connected plugin {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} Plugin.
    *  The type of action control placed on the headertoolbar is determined by the {@link sap.m.UploadSetwithTableActionPlaceHolder UploadSetwithTableActionPlaceHolder }
    * enum set.
-   *  This control is supposed to be used only within the headertoolbar aggregation of the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable }
-   * control.
+   *  This control is supposed to be used only within the association of the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable }
+   * Plugin.
    *
    * @since 1.120
-   * @experimental (since 1.120)
    */
   export default class ActionsPlaceholder extends Control {
     /**
@@ -152231,8 +152399,6 @@ declare module "sap/m/upload/ActionsPlaceholder" {
   }
   /**
    * Describes the settings that can be provided to the ActionsPlaceholder constructor.
-   *
-   * @experimental (since 1.120)
    */
   export interface $ActionsPlaceholderSettings extends $ControlSettings {
     /**
@@ -152914,6 +153080,7 @@ declare module "sap/m/upload/Uploader" {
    * A basic implementation for uploading and downloading one or multiple files.
    *
    * @since 1.63
+   * @deprecated (since 1.129) - replaced by {@link sap.m.upload.UploaderTableItem}
    */
   export default class Uploader extends UI5Element {
     /**
@@ -153478,6 +153645,8 @@ declare module "sap/m/upload/Uploader" {
   }
   /**
    * Describes the settings that can be provided to the Uploader constructor.
+   *
+   * @deprecated (since 1.129) - replaced by {@link sap.m.upload.UploaderTableItem}
    */
   export interface $UploaderSettings extends $ElementSettings {
     /**
@@ -153670,7 +153839,6 @@ declare module "sap/m/upload/UploaderTableItem" {
    * A basic implementation for uploading and downloading one or multiple files.
    *
    * @since 1.120
-   * @experimental (since 1.120)
    */
   export default class UploaderTableItem extends UI5Element {
     /**
@@ -154121,8 +154289,6 @@ declare module "sap/m/upload/UploaderTableItem" {
   }
   /**
    * Describes the settings that can be provided to the UploaderTableItem constructor.
-   *
-   * @experimental (since 1.120)
    */
   export interface $UploaderTableItemSettings extends $ElementSettings {
     /**
@@ -154274,7 +154440,6 @@ declare module "sap/m/upload/UploadItem" {
    * plugin.
    *
    * @since 1.124
-   * @experimental (since 1.124)
    */
   export default class UploadItem extends UI5Element {
     /**
@@ -154671,8 +154836,6 @@ declare module "sap/m/upload/UploadItem" {
   }
   /**
    * Describes the settings that can be provided to the UploadItem constructor.
-   *
-   * @experimental (since 1.124)
    */
   export interface $UploadItemSettings extends $ElementSettings {
     /**
@@ -154748,7 +154911,6 @@ declare module "sap/m/upload/UploadItemConfiguration" {
    * plugin.
    *
    * @since 1.124
-   * @experimental (since 1.124)
    */
   export default class UploadItemConfiguration extends UI5Element {
     /**
@@ -154999,8 +155161,6 @@ declare module "sap/m/upload/UploadItemConfiguration" {
   }
   /**
    * Describes the settings that can be provided to the UploadItemConfiguration constructor.
-   *
-   * @experimental (since 1.124)
    */
   export interface $UploadItemConfigurationSettings extends $ElementSettings {
     /**
@@ -155086,6 +155246,7 @@ declare module "sap/m/upload/UploadSet" {
    * and requests, unified behavior of instant and deferred uploads, as well as improved progress indication.
    *
    * @since 1.63
+   * @deprecated (since 1.129) - replaced by {@link sap.m.plugins.UploadSetwithTable}
    */
   export default class UploadSet extends Control {
     /**
@@ -157791,6 +157952,8 @@ declare module "sap/m/upload/UploadSet" {
   }
   /**
    * Describes the settings that can be provided to the UploadSet constructor.
+   *
+   * @deprecated (since 1.129) - replaced by {@link sap.m.plugins.UploadSetwithTable}
    */
   export interface $UploadSetSettings extends $ControlSettings {
     /**
@@ -158511,6 +158674,7 @@ declare module "sap/m/upload/UploadSetItem" {
    * Item that represents one file to be uploaded using the {@link sap.m.upload.UploadSet} control.
    *
    * @since 1.63
+   * @deprecated (since 1.129) - replaced by {@link sap.m.upload.UploadItem}
    */
   export default class UploadSetItem extends UI5Element {
     /**
@@ -159509,6 +159673,8 @@ declare module "sap/m/upload/UploadSetItem" {
   }
   /**
    * Describes the settings that can be provided to the UploadSetItem constructor.
+   *
+   * @deprecated (since 1.129) - replaced by {@link sap.m.upload.UploadItem}
    */
   export interface $UploadSetItemSettings extends $ElementSettings {
     /**
@@ -159678,6 +159844,7 @@ declare module "sap/m/upload/UploadSetToolbarPlaceholder" {
    * and it is placed by the application.
    *
    * @since 1.103.0
+   * @deprecated (since 1.129) - replaced by {@link sap.m.upload.ActionsPlaceholder}
    */
   export default class UploadSetToolbarPlaceholder extends Control {
     /**
@@ -159751,6 +159918,8 @@ declare module "sap/m/upload/UploadSetToolbarPlaceholder" {
   }
   /**
    * Describes the settings that can be provided to the UploadSetToolbarPlaceholder constructor.
+   *
+   * @deprecated (since 1.129) - replaced by {@link sap.m.upload.ActionsPlaceholder}
    */
   export interface $UploadSetToolbarPlaceholderSettings
     extends $ControlSettings {}
