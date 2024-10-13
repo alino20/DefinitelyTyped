@@ -745,9 +745,11 @@ declare namespace Parse {
         static become(sessionToken: string, options?: SuccessFailureOptions): Promise<User>;
         static requestPasswordReset(email: string, options?: SuccessFailureOptions): Promise<User>;
         static extend(protoProps?: any, classProps?: any): any;
+        static verifyPassword(username:string, password:string, options?:SuccessFailureOptions):Promise<User>
 
         signUp(attrs: any, options?: SignUpOptions): Promise<this>;
         logIn(options?: SuccessFailureOptions): Promise<this>;
+        verifyPassword(password:string, options?:SuccessFailureOptions):Promise<this>
         authenticated(): boolean;
         isCurrent(): boolean;
 
